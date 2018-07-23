@@ -1,5 +1,6 @@
-package io.github.plenglin.goggle.util
+package io.github.plenglin.goggle.util.activity
 
+import io.github.plenglin.goggle.util.scheduler.Command
 import java.util.*
 
 class ActivityManager : Command() {

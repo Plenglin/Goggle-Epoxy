@@ -1,6 +1,9 @@
-package io.github.plenglin.goggle.motion
+package io.github.plenglin.goggle.util
 
-import org.apache.commons.math3.complex.Quaternion
+import io.github.plenglin.goggle.devices.motion.Accelerometer
+import io.github.plenglin.goggle.devices.motion.Gyroscope
+import io.github.plenglin.goggle.devices.motion.Magnetometer
+import io.github.plenglin.goggle.util.scheduler.Command
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 
@@ -11,14 +14,14 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
  * - Y/J: Down
  * - Z/K: North
  */
-class OrientationIntegrator(val gyro: Gyroscope, val mag: Magnetometer, val acc: Accelerometer, private val compensation: Double = 0.02) {
+class OrientationIntegrator(val gyro: Gyroscope, val mag: Magnetometer, val acc: Accelerometer, private val compensation: Double = 0.02) : Command() {
 
     private val invCompensation = 1 - compensation
     private var state: Rotation = Rotation.IDENTITY
 
-    fun update(dt: Int) {
-        val northRaw = mag.getMagneticField()
-        val down = acc.getAcceleration().normalize()
+    override fun update(dt: Int) {
+        val northRaw = mag.magneticField
+        val down = acc.acceleration.normalize()
         val east = down.crossProduct(northRaw)
         val north = down.crossProduct(east).normalize()
 
@@ -27,7 +30,7 @@ class OrientationIntegrator(val gyro: Gyroscope, val mag: Magnetometer, val acc:
         val absolute = Rotation(Vector3D.PLUS_K, Vector3D.PLUS_J, north, down)
         val relative = delta.applyTo(state)
 
-        // Weighted average of the 2 axes. Essentially, shitty slerp.
+        // Weighted average of the 2 rotations. Essentially, shitty slerp.
         val newAxis = relative.axis.scalarMultiply(invCompensation).add(absolute.axis.scalarMultiply(compensation))
         val newAngle = relative.angle * invCompensation + absolute.angle * invCompensation
         state = Rotation(newAxis, newAngle)

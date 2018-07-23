@@ -1,4 +1,4 @@
-package io.github.plenglin.goggle.util
+package io.github.plenglin.goggle.util.activity
 
 sealed class ActivityOperation
 
