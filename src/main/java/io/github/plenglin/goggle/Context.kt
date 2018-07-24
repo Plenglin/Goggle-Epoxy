@@ -11,6 +11,7 @@ class Context(val hardware: Hardware) {
     val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc)
 
     fun run() {
+        hardware.commands.forEach(scheduler::addCommand)
         scheduler.addCommand(orientation)
         scheduler.addCommand(activity)
 

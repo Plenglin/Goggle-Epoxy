@@ -18,6 +18,5 @@ data class Hardware(
         val alt: Altimeter,
         val bar: Barometer,
         val therm: Thermometer,
-        val buttons: Map<String, Button>,
-        val hardwareCommands: List<Command>
+        val commands: List<Command>
 )
