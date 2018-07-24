@@ -1,0 +1,41 @@
+package io.github.plenglin.goggle.hardware
+
+import com.pi4j.io.i2c.I2CDevice
+import io.github.plenglin.goggle.devices.motion.Gyroscope
+import io.github.plenglin.goggle.util.read
+import io.github.plenglin.goggle.util.scheduler.Command
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+
+
+class GyroL3GD20(val dev: I2CDevice, val addr: Int, scale: GyroL3GD20Scale) : Gyroscope, Command() {
+    private val angVel = IntArray(3)
+
+    private val sclMsg = scale.code
+    private val multiplier = scale.scl * Math.PI / 180 / 32768
+
+    override fun getDeltaRotation(dt: Int): Rotation {
+        val vec = Vector3D(
+                (angVel[0] * dt).toDouble(),
+                (angVel[1] * dt).toDouble(),
+                (angVel[2] * dt).toDouble())
+                .scalarMultiply(multiplier / 1000)
+        return Rotation(vec, vec.norm)
+    }
+
+    override fun initialize() {
+        dev.write(addr, sclMsg.toByte())
+    }
+
+    override fun update(dt: Int) {
+        angVel[0] = (dev.read(addr, 0x28) shl 8) or dev.read(addr, 0x29)
+        angVel[1] = (dev.read(addr, 0x2a) shl 8) or dev.read(addr, 0x2b)
+        angVel[2] = (dev.read(addr, 0x2c) shl 8) or dev.read(addr, 0x2d)
+    }
+}
+
+enum class GyroL3GD20Scale(val code: Short, val scl: Double) {
+    S_250(0x00, 250.0),
+    S_500(0x10, 500.0),
+    S_2000(0x20, 2000.0)
+}
