@@ -14,10 +14,14 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
  * - Y/J: Down
  * - Z/K: North
  */
-class OrientationIntegrator(val gyro: Gyroscope, val mag: Magnetometer, val acc: Accelerometer, private val compensation: Double = 0.02) : Command() {
+class OrientationIntegrator(private val gyro: Gyroscope,
+                            private val mag: Magnetometer,
+                            private val acc: Accelerometer,
+                            private val compensation: Double = 0.02) : Command() {
 
     private val invCompensation = 1 - compensation
-    private var state: Rotation = Rotation.IDENTITY
+    var orientation: Rotation = Rotation.IDENTITY
+        private set
 
     override fun update(dt: Int) {
         val northRaw = mag.magneticField
@@ -28,12 +32,12 @@ class OrientationIntegrator(val gyro: Gyroscope, val mag: Magnetometer, val acc:
         val delta = gyro.getDeltaRotation(dt)
 
         val absolute = Rotation(Vector3D.PLUS_K, Vector3D.PLUS_J, north, down)
-        val relative = delta.applyTo(state)
+        val relative = delta.applyTo(orientation)
 
         // Weighted average of the 2 rotations. Essentially, shitty slerp.
         val newAxis = relative.axis.scalarMultiply(invCompensation).add(absolute.axis.scalarMultiply(compensation))
         val newAngle = relative.angle * invCompensation + absolute.angle * invCompensation
-        state = Rotation(newAxis, newAngle)
+        orientation = Rotation(newAxis, newAngle)
     }
 
 }

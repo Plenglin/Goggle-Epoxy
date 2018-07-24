@@ -2,6 +2,7 @@ package io.github.plenglin.goggle
 
 import com.pi4j.io.gpio.GpioController
 import com.pi4j.io.i2c.I2CBus
+import io.github.plenglin.goggle.devices.display.Display
 import io.github.plenglin.goggle.devices.motion.Accelerometer
 import io.github.plenglin.goggle.devices.motion.Gyroscope
 import io.github.plenglin.goggle.devices.motion.Magnetometer
@@ -11,13 +12,14 @@ import io.github.plenglin.goggle.devices.weather.Thermometer
 import io.github.plenglin.goggle.util.scheduler.Command
 
 data class Hardware(
-        val gpio: GpioController,
-        val i2c: I2CBus,
+        val gpio: GpioController? = null,
+        val i2c: I2CBus? = null,
         val acc: Accelerometer,
         val gyro: Gyroscope,
         val mag: Magnetometer,
         val alt: Altimeter,
         val bar: Barometer,
         val therm: Thermometer,
+        val display: Display,
         val commands: List<Command>
 )
