@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     val mpl = WeatherMPL3115A2(i2c.getDevice(0x60))
 
     val hw = Hardware(
-            gpio = gpio,
+            gpio = gpio, i2c = i2c,
             acc = acc, mag = mag, gyro = gyro,
             alt = mpl, bar = mpl, therm = mpl,
             commands = listOf(mpl, acc, mag, gyro)
