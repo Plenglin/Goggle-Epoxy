@@ -9,6 +9,7 @@ import kotlin.experimental.and
 
 class MagnetometerLSM303DLHC(val dev: I2CDevice, val addr: Int, val scale: MagnetometerLSM303DLHCScale): Magnetometer, Command() {
     override var magneticField: Vector3D = Vector3D.ZERO
+        private set
 
     private val multiplier: Double = scale.scl / 2048
 

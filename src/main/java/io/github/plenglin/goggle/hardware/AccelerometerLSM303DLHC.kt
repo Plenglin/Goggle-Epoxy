@@ -9,6 +9,7 @@ import kotlin.experimental.and
 
 class AccelerometerLSM303DLHC(val dev: I2CDevice, val addr: Int, val scale: AccelerometerLSM303DLHCScale) : Accelerometer, Command() {
     override var acceleration: Vector3D = Vector3D.ZERO
+        private set
 
     private val multiplier = scale.scl / 32768
 
