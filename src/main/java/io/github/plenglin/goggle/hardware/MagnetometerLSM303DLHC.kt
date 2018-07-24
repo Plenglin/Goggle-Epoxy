@@ -2,12 +2,11 @@ package io.github.plenglin.goggle.hardware
 
 import com.pi4j.io.i2c.I2CDevice
 import io.github.plenglin.goggle.devices.motion.Magnetometer
-import io.github.plenglin.goggle.util.read
 import io.github.plenglin.goggle.util.scheduler.Command
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import kotlin.experimental.and
 
-class MagnetometerLSM303DLHC(val dev: I2CDevice, val addr: Int, val scale: MagnetometerLSM303DLHCScale): Magnetometer, Command() {
+class MagnetometerLSM303DLHC(val dev: I2CDevice, val scale: MagnetometerLSM303DLHCScale): Magnetometer, Command() {
     override var magneticField: Vector3D = Vector3D.ZERO
         private set
 
@@ -15,15 +14,15 @@ class MagnetometerLSM303DLHC(val dev: I2CDevice, val addr: Int, val scale: Magne
 
     override fun initialize() {
         // TODO: CHECK IF CORRECT
-        dev.write(addr, byteArrayOf(0x20, 0x27))
-        dev.write(addr, byteArrayOf(0x23, scale.msg.toByte() and 0x30))
+        dev.write(0x20, 0x27)
+        dev.write(0x23, scale.msg.toByte() and 0x30)
     }
 
     override fun update(dt: Int) {
         magneticField = Vector3D(
-                multiplier * ((dev.read(addr, 0x03) shl 8) or dev.read(addr, 0x04)).toDouble(),
-                multiplier * ((dev.read(addr, 0x05) shl 8) or dev.read(addr, 0x06)).toDouble(),
-                multiplier * ((dev.read(addr, 0x07) shl 8) or dev.read(addr, 0x08)).toDouble()
+                multiplier * ((dev.read(0x03) shl 8) or dev.read(0x04)).toDouble(),
+                multiplier * ((dev.read(0x05) shl 8) or dev.read(0x06)).toDouble(),
+                multiplier * ((dev.read(0x07) shl 8) or dev.read(0x08)).toDouble()
         )
     }
 

@@ -11,6 +11,8 @@ buildscript {
 
 plugins {
     id 'java'
+    id 'idea'
+    id 'eclipse'
 }
 
 group 'io.github.plenglin'
