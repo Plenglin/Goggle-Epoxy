@@ -1,6 +1,9 @@
 package io.github.plenglin.goggle
 
 import com.pi4j.io.gpio.GpioFactory
+import com.pi4j.io.gpio.Pin
+import com.pi4j.io.gpio.PinPullResistance
+import com.pi4j.io.gpio.RaspiPin
 import com.pi4j.io.i2c.I2CBus
 import com.pi4j.io.i2c.I2CFactory
 import io.github.plenglin.goggle.hardware.*
@@ -17,13 +20,26 @@ fun main(args: Array<String>) {
 
     val mpl = WeatherMPL3115A2(i2c.getDevice(0x60))
 
-    val ssd = DisplaySSD1306(i2c.getDevice(0x30))  // TODO FIND THE RIGHT ADDRESS
+    val ssd = DisplaySSD1306(i2c.getDevice(0x7a))  // potentially 0x3c
+
+    val btnX = ButtonGPIO("x", gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP))
+    val btnY = ButtonGPIO("y", gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP))
+    val btnZ = ButtonGPIO("z", gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP))
+    val btnS = ButtonGPIO("s", gpio.provisionDigitalInputPin(RaspiPin.GPIO_22, PinPullResistance.PULL_UP))
+    val btnH = ButtonGPIO("h", gpio.provisionDigitalInputPin(RaspiPin.GPIO_25, PinPullResistance.PULL_UP))
+
+    val encSel = EncoderGPIO("sel",
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_UP),
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP)
+    )
 
     val hw = Hardware(
             gpio = gpio, i2c = i2c,
             acc = acc, mag = mag, gyro = gyro,
             alt = mpl, bar = mpl, therm = mpl,
             display = ssd,
+            buttons = listOf(btnX, btnY, btnZ, btnS, btnH),
+            encoders = listOf(encSel),
             commands = listOf(mpl, acc, mag, gyro)
     )
 

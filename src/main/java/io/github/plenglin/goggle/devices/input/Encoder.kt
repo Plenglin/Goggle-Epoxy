@@ -1,5 +1,6 @@
 package io.github.plenglin.goggle.devices.input
 
 interface Encoder {
-    val ticks: Double
+    val name: String
+    val ticks: Long
 }
