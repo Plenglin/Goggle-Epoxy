@@ -1,9 +1,13 @@
 package io.github.plenglin.goggle.util.activity
 
+import io.github.plenglin.goggle.Context
 import io.github.plenglin.goggle.util.scheduler.Command
 import java.util.*
+import java.util.logging.Logger
 
-class ActivityManager : Command() {
+class ActivityManager(val ctx: Context) : Command() {
+
+    private val log = Logger.getLogger(javaClass.name)
 
     private val stack: Stack<Activity> = Stack()
     private var currentActivity: Activity? = null
@@ -13,14 +17,18 @@ class ActivityManager : Command() {
         val op = nextActivityOperation
         when (op) {
             is PushActivityOperation -> {
-                val tmp = currentActivity
-                if (tmp != null) {
-                    tmp.suspend()
-                    stack.push(tmp)
+                currentActivity?.let {
+                    log.info { "Pushing $it onto back stack" }
+                    it.suspend()
+                    stack.push(it)
                 }
                 currentActivity = op.newActivity
-                op.newActivity.start()
-                op.newActivity.resume()
+                op.newActivity.let {
+                    log.info { "Activating $it" }
+                    it.ctx = this.ctx
+                    it.start()
+                    it.resume()
+                }
             }
             is PopActivityOperation -> {
                 currentActivity?.apply {
@@ -37,23 +45,30 @@ class ActivityManager : Command() {
                     stop()
                 }
                 currentActivity = op.newActivity
-                op.newActivity.start()
-                op.newActivity.resume()
+                op.newActivity.let {
+                    it.ctx = this.ctx
+                    it.start()
+                    it.resume()
+                }
             }
         }
+        currentActivity?.update(dt)
         nextActivityOperation = null
     }
 
     fun pushActivity(newActivity: Activity) {
         nextActivityOperation = PushActivityOperation(newActivity)
+        log.info { "Queueing $nextActivityOperation" }
     }
 
     fun popActivity() {
         nextActivityOperation = PopActivityOperation()
+        log.info { "Queueing $nextActivityOperation" }
     }
 
     fun swapActivity(newActivity: Activity) {
         nextActivityOperation = SwapActivityOperation(newActivity)
+        log.info { "Queueing $nextActivityOperation" }
     }
 
 }

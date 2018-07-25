@@ -21,5 +21,5 @@ data class Hardware(
         val bar: Barometer,
         val therm: Thermometer,
         val display: Display,
-        val commands: List<Command>
+        val commands: List<Command> = emptyList()
 )
