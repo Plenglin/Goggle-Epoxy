@@ -5,11 +5,11 @@ import io.github.plenglin.goggle.util.OrientationIntegrator
 import io.github.plenglin.goggle.util.activity.ActivityManager
 import io.github.plenglin.goggle.util.scheduler.Scheduler
 
-class Context(val hardware: Hardware) {
+class Context(val resources: Resources, val hardware: Hardware) {
 
     val scheduler: Scheduler = Scheduler()
     val activity: ActivityManager = ActivityManager(this)
-    val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc)
+    val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc, 0.01)
 
     fun run() {
         hardware.commands.forEach(scheduler::addCommand)

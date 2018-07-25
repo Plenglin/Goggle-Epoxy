@@ -20,23 +20,27 @@ class OrientationIntegrator(private val gyro: Gyroscope,
                             private val compensation: Double = 0.02) : Command() {
 
     private val invCompensation = 1 - compensation
+
     var orientation: Rotation = Rotation.IDENTITY
         private set
 
     override fun update(dt: Int) {
         val northRaw = mag.magneticField
-        val down = acc.acceleration.normalize()
+        val down = acc.acceleration
         val east = down.crossProduct(northRaw)
-        val north = down.crossProduct(east).normalize()
+        val north = down.crossProduct(east)
 
         val delta = gyro.getDeltaRotation(dt)
 
+        // Absolute orientation.
         val absolute = Rotation(Vector3D.PLUS_K, Vector3D.PLUS_J, north, down)
+
+        // Dead reckoning orientation.
         val relative = delta.applyTo(orientation)
 
         // Weighted average of the 2 rotations. Essentially, shitty slerp.
-        val newAxis = relative.axis.scalarMultiply(invCompensation).add(absolute.axis.scalarMultiply(compensation))
-        val newAngle = relative.angle * invCompensation + absolute.angle * invCompensation
+        val newAxis = relative.axis.scalarMultiply(invCompensation).add(absolute.axis.scalarMultiply(compensation))  // avg. axes
+        val newAngle = relative.angle * invCompensation + absolute.angle * compensation  // avg. angles
         orientation = Rotation(newAxis, newAngle)
     }
 

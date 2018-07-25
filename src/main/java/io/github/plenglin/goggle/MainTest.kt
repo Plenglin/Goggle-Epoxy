@@ -6,7 +6,7 @@ import io.github.plenglin.goggle.devices.motion.Magnetometer
 import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
-import io.github.plenglin.goggle.hardware.*
+import io.github.plenglin.goggle.hardware.DisplaySwingWindow
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import javax.swing.JFrame
@@ -54,5 +54,5 @@ fun main(args: Array<String>) {
         f.isResizable = false
     }
     println("Running context")
-    Context(hw).run()
+    Context(Resources(), hw).run()
 }

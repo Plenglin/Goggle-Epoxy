@@ -25,5 +25,5 @@ fun main(args: Array<String>) {
             commands = listOf(mpl, acc, mag, gyro)
     )
 
-    Context(hw).run()
+    Context(Resources(), hw).run()
 }

@@ -2,10 +2,7 @@ package io.github.plenglin.goggle
 
 import java.awt.Color
 import java.awt.image.BufferedImage
-import java.awt.image.DataBufferByte
 import java.awt.image.DataBufferInt
-import java.io.File
-import javax.imageio.ImageIO
 
 fun main(args: Array<String>) {
     val im = BufferedImage(128, 64, BufferedImage.TYPE_INT_ARGB)
