@@ -1,7 +1,8 @@
 package io.github.plenglin.goggle
 
 import java.awt.Font
+import java.io.File
 
 data class Resources(
-        val font: Font = Font("Arial", Font.PLAIN, 8)
+        val font: Font = Font.createFont(Font.TRUETYPE_FONT, File("pixelated.ttf")).deriveFont(8f)
 )

@@ -26,7 +26,7 @@ class HomeSensorsActivity : Activity() {
         val alt = ctx.hardware.alt.altitude
 
         val ori = ctx.orientation.orientation
-        val matProj = MatrixUtils.createRealMatrix(ori.matrix).scalarMultiply(64.0)
+        val matProj = MatrixUtils.createRealMatrix(ori.matrix).scalarMultiply(128.0)
         val trLongitude = matProj.multiply(LONGITUDE_POINTS)
         g.clearRect(0, 0, 128, 128)
 
@@ -53,9 +53,9 @@ class HomeSensorsActivity : Activity() {
             g.drawString("S", it[0].toInt() + 64, it[1].toInt() + 32)
         }
 
-        g.drawString("${"%.1f".format(temp)}°C", 0, 9)
-        g.drawString("${"%.1f".format(pres)}kPa", 0, 18)
-        g.drawString("${"%.1f".format(alt)}m", 0, 27)
+        g.drawString("${"%.1f".format(temp)}C", 0, 48)
+        g.drawString("${"%.1f".format(pres)}kPa", 0, 56)
+        g.drawString("${"%.1f".format(alt)}m", 0, 64)
     }
 
     override fun stop() {
@@ -70,7 +70,7 @@ class HomeSensorsActivity : Activity() {
 
     companion object {
 
-        const val LONG_INCREMENT: Int = 30
+        const val LONG_INCREMENT: Int = 15
         const val LONG_COUNT: Int = 360 / LONG_INCREMENT
         const val LONG_MAT_WIDTH: Int = LONG_COUNT * 2
         const val LONG_LENGTH: Double = 0.03
