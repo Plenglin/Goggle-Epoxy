@@ -108,7 +108,7 @@ class HomeSensorsActivity : Activity() {
         const val LAT_LENGTH: Double = 0.005
 
         /**
-         * 3-vectors embedded in a nx3 matrix. Last 4 vectors represent ENWS in that order.
+         * 3-vectors embedded in a nx3 matrix.
          */
         val LONGITUDE_LINES: List<Line> by lazy {
             (0 until 360 step LONG_INCREMENT)
@@ -170,8 +170,8 @@ class HomeSensorsActivity : Activity() {
                 "SW" to doubleArrayOf(-INV_SQRT_2, 0.0, -INV_SQRT_2),
                 "W" to doubleArrayOf(-1.0, 0.0, 0.0),
                 "NW" to doubleArrayOf(-INV_SQRT_2, 0.0, INV_SQRT_2),
-                "UP" to doubleArrayOf(0.0, 1.0, 0.0),
-                "DN" to doubleArrayOf(0.0, -1.0, 0.0)
+                "UP" to doubleArrayOf(0.0, -1.0, 0.0),
+                "DN" to doubleArrayOf(0.0, 1.0, 0.0)
         )
     }
 }

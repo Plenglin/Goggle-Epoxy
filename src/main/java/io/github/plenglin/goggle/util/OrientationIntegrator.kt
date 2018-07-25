@@ -40,7 +40,7 @@ class OrientationIntegrator(private val gyro: Gyroscope,
 
         // Absolute orientation.
         val absolute: Rotation = try {
-            Rotation(Vector3D.MINUS_K, Vector3D.MINUS_J, north, down)
+            Rotation(Vector3D.MINUS_K, Vector3D.PLUS_J, north, down)
         } catch (e: MathArithmeticException) {  // Sometimes zero norm vector error happens
             log.warn("Failed to convert compass + acceleration to orientation, skipping absolute measurement")
             orientation = relative
