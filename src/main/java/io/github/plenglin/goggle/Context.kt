@@ -9,7 +9,8 @@ class Context(val resources: Resources, val hardware: Hardware) {
 
     val scheduler: Scheduler = Scheduler()
     val activity: ActivityManager = ActivityManager(this)
-    val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc, 0.01)
+    // TODO: CHANGE COMPENSATION WHEN USING EMBEDDED
+    val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc, 0.5)
 
     fun run() {
         hardware.commands.forEach(scheduler::addCommand)

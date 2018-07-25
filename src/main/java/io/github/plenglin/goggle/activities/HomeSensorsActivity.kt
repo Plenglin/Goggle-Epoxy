@@ -25,7 +25,7 @@ class HomeSensorsActivity : Activity() {
         val pres = ctx.hardware.bar.pressure
         val alt = ctx.hardware.alt.altitude
 
-        val ori = ctx.orientation.orientation.revert()
+        val ori = ctx.orientation.orientation
         val matProj = MatrixUtils.createRealMatrix(ori.matrix).scalarMultiply(64.0)
         val trLongitude = matProj.multiply(LONGITUDE_POINTS)
         g.clearRect(0, 0, 128, 128)
@@ -53,9 +53,9 @@ class HomeSensorsActivity : Activity() {
             g.drawString("S", it[0].toInt() + 64, it[1].toInt() + 32)
         }
 
-        /*g.drawString("$temp°C", 0, 9)
-        g.drawString("$pres kPa", 0, 18)
-        g.drawString("$alt m", 0, 27)*/
+        g.drawString("${"%.1f".format(temp)}°C", 0, 9)
+        g.drawString("${"%.1f".format(pres)}kPa", 0, 18)
+        g.drawString("${"%.1f".format(alt)}m", 0, 27)
     }
 
     override fun stop() {
