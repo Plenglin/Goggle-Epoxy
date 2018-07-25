@@ -11,11 +11,14 @@ import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+import org.apache.log4j.BasicConfigurator
 import java.awt.Point
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
 fun main(args: Array<String>) {
+    BasicConfigurator.configure()
+
     val dsp = DebugSliderPanel()
     val accX = dsp.createControllableObject("accX", -10.0, 10.0, 0.0)
     val accY = dsp.createControllableObject("accY", -10.0, 10.0, 10.0)

@@ -2,12 +2,12 @@ package io.github.plenglin.goggle.util.activity
 
 import io.github.plenglin.goggle.Context
 import io.github.plenglin.goggle.util.scheduler.Command
+import org.slf4j.LoggerFactory
 import java.util.*
-import java.util.logging.Logger
 
 class ActivityManager(val ctx: Context) : Command() {
 
-    private val log = Logger.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass.name)
 
     private val stack: Stack<Activity> = Stack()
     private var currentActivity: Activity? = null
@@ -18,13 +18,13 @@ class ActivityManager(val ctx: Context) : Command() {
         when (op) {
             is PushActivityOperation -> {
                 currentActivity?.let {
-                    log.info { "Pushing $it onto back stack" }
+                    log.info("Pushing {} onto back stack", it)
                     it.suspend()
                     stack.push(it)
                 }
                 currentActivity = op.newActivity
                 op.newActivity.let {
-                    log.info { "Activating $it" }
+                    log.info("Activating {}", it)
                     it.ctx = this.ctx
                     it.start()
                     it.resume()
@@ -58,17 +58,17 @@ class ActivityManager(val ctx: Context) : Command() {
 
     fun pushActivity(newActivity: Activity) {
         nextActivityOperation = PushActivityOperation(newActivity)
-        log.info { "Queueing $nextActivityOperation" }
+        log.info("Queueing {}", nextActivityOperation)
     }
 
     fun popActivity() {
         nextActivityOperation = PopActivityOperation()
-        log.info { "Queueing $nextActivityOperation" }
+        log.info("Queueing {}", nextActivityOperation)
     }
 
     fun swapActivity(newActivity: Activity) {
         nextActivityOperation = SwapActivityOperation(newActivity)
-        log.info { "Queueing $nextActivityOperation" }
+        log.info("Queueing {}", nextActivityOperation)
     }
 
 }

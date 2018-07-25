@@ -7,7 +7,7 @@ import io.github.plenglin.goggle.util.scheduler.Command
 import org.apache.commons.math3.exception.MathArithmeticException
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
-import java.util.logging.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Coordinate system:
@@ -21,7 +21,7 @@ class OrientationIntegrator(private val gyro: Gyroscope,
                             private val acc: Accelerometer,
                             private val compensation: Double = 0.02) : Command() {
 
-    private val log = Logger.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass.name)
     private val invCompensation = 1 - compensation
 
     var orientation: Rotation = Rotation.IDENTITY
@@ -42,7 +42,7 @@ class OrientationIntegrator(private val gyro: Gyroscope,
         val absolute: Rotation = try {
             Rotation(Vector3D.MINUS_K, Vector3D.MINUS_J, north, down)
         } catch (e: MathArithmeticException) {  // Sometimes zero norm vector error happens
-            log.severe("Failed to convert compass + acceleration to orientation, skipping absolute measurement")
+            log.warn("Failed to convert compass + acceleration to orientation, skipping absolute measurement")
             orientation = relative
             return
         }

@@ -4,8 +4,10 @@ import com.pi4j.io.gpio.GpioFactory
 import com.pi4j.io.i2c.I2CBus
 import com.pi4j.io.i2c.I2CFactory
 import io.github.plenglin.goggle.hardware.*
+import org.apache.log4j.BasicConfigurator
 
 fun main(args: Array<String>) {
+    BasicConfigurator.configure()
     val gpio = GpioFactory.getInstance()!!
     val i2c = I2CFactory.getInstance(I2CBus.BUS_1)!!
 

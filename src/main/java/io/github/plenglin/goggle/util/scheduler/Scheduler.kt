@@ -1,11 +1,11 @@
 package io.github.plenglin.goggle.util.scheduler
 
+import org.slf4j.LoggerFactory
 import java.util.*
-import java.util.logging.Logger
 
 class Scheduler {
 
-    private val log = Logger.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass.name)
 
     private val queue: Queue<Command> = LinkedList()
 
@@ -18,18 +18,18 @@ class Scheduler {
 
     fun update() {
         val c = queue.remove()
-        log.fine { "Processing $c" }
+        log.debug("Processing {}", c)
         if (!c.isRunning) {
-            log.info { "Initializing $c" }
+            log.info("Initializing {}", c)
             c.initialize()
             c.isRunning = true
         }
-        log.fine { "Updating $c" }
+        log.debug("Updating {}", c)
         val currentTime = System.currentTimeMillis()
         c.update((currentTime - c.lastExecuted).toInt())
         c.lastExecuted = currentTime
         if (c.shouldTerminate()) {
-            log.info { "Terminating $c" }
+            log.info("Terminating {}", c)
             c.terminate()
         } else {
             queue.offer(c)
