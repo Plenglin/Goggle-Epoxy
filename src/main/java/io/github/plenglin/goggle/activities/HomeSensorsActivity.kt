@@ -4,6 +4,7 @@ import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.InputEvent
 import org.apache.commons.math3.linear.MatrixUtils
+import org.apache.commons.math3.linear.RealMatrix
 import java.awt.BasicStroke
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -39,6 +40,8 @@ class HomeSensorsActivity : Activity() {
         val ori = ctx.orientation.orientation
         val matProj = MatrixUtils.createRealMatrix(ori.matrix).scalarMultiply(128.0)
         val trLongitude = matProj.multiply(LONGITUDE_POINTS)
+
+        val trLatitude = LATITUDE_POINTS.map { matProj.multiply(it) }
         g.clearRect(0, 0, 128, 128)
 
         for (i in 0 until LONG_COUNT) {
@@ -46,6 +49,16 @@ class HomeSensorsActivity : Activity() {
             drawAtPoint(trLongitude.getColumn(j)) { a ->
                 val b = trLongitude.getColumn(j + 1)
                 g.drawLine(a[0].toInt() + 64, a[1].toInt() + 32, b[0].toInt() + 64, b[1].toInt() + 32)
+            }
+        }
+
+        trLatitude.forEach {
+            for (i in 0 until LAT_Y_COUNT) {
+                val j = 2 * i
+                drawAtPoint(it.getColumn(j)) { a ->
+                    val b = it.getColumn(j + 1)
+                    g.drawLine(a[0].toInt() + 64, a[1].toInt() + 32, b[0].toInt() + 64, b[1].toInt() + 32)
+                }
             }
         }
 
@@ -88,15 +101,17 @@ class HomeSensorsActivity : Activity() {
         const val LONG_MAT_WIDTH: Int = LONG_COUNT * 2
         const val LONG_LENGTH: Double = 0.01
 
-        const val LAT_INCREMENT: Int = 15
-        const val LAT_COUNT: Int = 360 / LAT_INCREMENT
-        const val LAT_MAT_WIDTH: Int = LAT_COUNT * 2
-        const val LAT_LENGTH: Double = 0.01
+        const val LAT_Y_INCREMENT: Int = 15
+        const val LAT_X_INCREMENT: Int = 45
+        const val LAT_Y_COUNT: Int = 360 / LAT_Y_INCREMENT
+        const val LAT_X_COUNT: Int = 180 / LAT_X_INCREMENT
+        const val LAT_MAT_WIDTH: Int = LAT_X_COUNT * LAT_Y_COUNT * 2
+        const val LAT_LENGTH: Double = 0.005
 
         /**
          * 3-vectors embedded in a nx3 matrix. Last 4 vectors represent ENWS in that order.
          */
-        val LONGITUDE_POINTS by lazy {
+        val LONGITUDE_POINTS: RealMatrix by lazy {
             val m = MatrixUtils.createRealMatrix(3, LONG_COUNT * 2 + 4)
             for (i in 0 until LONG_COUNT) {
                 val j = i * 2
@@ -114,18 +129,29 @@ class HomeSensorsActivity : Activity() {
         }
 
         /**
-         * 3-vectors embedded in a nx3 matrix. Last 2 vectors represent up and down in that order.
+         * 3-vectors embedded in a nx3 matrices.
          */
-        val LATITUDE_POINTS by lazy {
-            val m = MatrixUtils.createRealMatrix(4, LAT_COUNT * 2)
-            for (i in 0 until LAT_COUNT) {
-                val a = Math.toRadians((i * LAT_INCREMENT).toDouble())
-                m.setColumn(i, doubleArrayOf(Math.cos(a), LAT_LENGTH, Math.sin(a), 1.0))
-                m.setColumn(i + 1, doubleArrayOf(Math.cos(a), -LAT_LENGTH, Math.sin(a), 1.0))
+        val LATITUDE_POINTS: List<RealMatrix> by lazy {
+            val mBase = MatrixUtils.createRealMatrix(3, LAT_MAT_WIDTH)
+            for (i in 0 until LAT_Y_COUNT) {
+                val k = 2 * i
+                val a = Math.toRadians((i * LAT_Y_INCREMENT).toDouble())
+                val cos = Math.cos(a)
+                val sin = Math.sin(a)
+                mBase.setColumn(k, doubleArrayOf(LAT_LENGTH, cos, sin))
+                mBase.setColumn(k + 1, doubleArrayOf(-LAT_LENGTH, cos, sin))
             }
-            m.setColumn(LAT_MAT_WIDTH, doubleArrayOf(0.0, 1.0, 0.0))
-            m.setColumn(LAT_MAT_WIDTH + 1, doubleArrayOf(0.0, -1.0, 0.0))
-            m
+            val others = (1 until LAT_X_COUNT).map { i ->
+                val a = Math.toRadians((i * LAT_X_INCREMENT).toDouble())
+                val cos = Math.cos(a)
+                val sin = Math.sin(a)
+                MatrixUtils.createRealMatrix(arrayOf(
+                        doubleArrayOf(cos, 0.0, sin),
+                        doubleArrayOf(0.0, 1.0, 0.0),
+                        doubleArrayOf(sin, 0.0, -cos)
+                )).multiply(mBase)
+            }
+            listOf(mBase) + others
         }
 
     }

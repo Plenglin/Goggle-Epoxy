@@ -1,7 +1,6 @@
 package io.github.plenglin.goggle
 
 import com.pi4j.io.gpio.GpioFactory
-import com.pi4j.io.gpio.Pin
 import com.pi4j.io.gpio.PinPullResistance
 import com.pi4j.io.gpio.RaspiPin
 import com.pi4j.io.i2c.I2CBus

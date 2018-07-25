@@ -1,7 +1,6 @@
 package io.github.plenglin.goggle
 
 import io.github.plenglin.goggle.activities.BlankActivity
-import io.github.plenglin.goggle.activities.HomeSensorsActivity
 import io.github.plenglin.goggle.commands.ButtonEventQueueFeeder
 import io.github.plenglin.goggle.commands.EncoderEventQueueFeeder
 import io.github.plenglin.goggle.util.OrientationIntegrator

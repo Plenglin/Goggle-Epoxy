@@ -15,7 +15,6 @@ import org.apache.log4j.BasicConfigurator
 import org.apache.log4j.Logger
 import java.awt.Point
 import java.awt.event.KeyEvent
-import java.security.Key
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
@@ -28,9 +27,9 @@ fun main(args: Array<String>) {
     val accX = dsp.createControllableObject("accX", -10.0, 10.0, 0.0)
     val accY = dsp.createControllableObject("accY", -10.0, 10.0, 10.0)
     val accZ = dsp.createControllableObject("accZ", -10.0, 10.0, 0.0)
-    val magX = dsp.createControllableObject("magX", -1.0, 1.0, 0.4)
+    val magX = dsp.createControllableObject("magX", -1.0, 1.0, 0.0)
     val magY = dsp.createControllableObject("magY", -1.0, 1.0, 0.0)
-    val magZ = dsp.createControllableObject("magZ", -1.0, 1.0, 0.0)
+    val magZ = dsp.createControllableObject("magZ", -1.0, 1.0, 0.4)
 
     val alt = dsp.createControllableObject("alt", 0.0, 1000.0, 300.0)
     val temp = dsp.createControllableObject("temp", -20.0, 40.0, 20.0)
