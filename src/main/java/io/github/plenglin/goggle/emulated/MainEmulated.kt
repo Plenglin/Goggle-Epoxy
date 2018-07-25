@@ -99,7 +99,7 @@ fun main(args: Array<String>) {
 
     SwingUtilities.invokeLater {
         log.info("Creating slider panel")
-        JFrame("Sliders").apply {
+        JFrame("Sensor Sliders").apply {
             add(dsp)
             pack()
             isVisible = true
@@ -107,6 +107,7 @@ fun main(args: Array<String>) {
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         }
     }
+
     log.info("Running context")
     Context(Resources(), hw, 1.0, 500000).run()
 }

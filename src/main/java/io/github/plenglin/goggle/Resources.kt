@@ -4,5 +4,5 @@ import java.awt.Font
 import java.io.File
 
 data class Resources(
-        val font: Font = Font.createFont(Font.TRUETYPE_FONT, File("pixelated.ttf")).deriveFont(8f)
+        val fontPrimary: Font = Font.createFont(Font.TRUETYPE_FONT, File("pixelated.ttf")).deriveFont(8f)
 )
