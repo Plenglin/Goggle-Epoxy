@@ -18,13 +18,13 @@ class Scheduler {
 
     fun update() {
         val c = queue.remove()
-        log.debug("Processing {}", c)
+        log.trace("Processing {}", c)
         if (!c.isRunning) {
             log.info("Initializing {}", c)
             c.initialize()
             c.isRunning = true
         }
-        log.debug("Updating {}", c)
+        log.trace("Updating {}", c)
         val currentTime = System.currentTimeMillis()
         c.update((currentTime - c.lastExecuted).toInt())
         c.lastExecuted = currentTime

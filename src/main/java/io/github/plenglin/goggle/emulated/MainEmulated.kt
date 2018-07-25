@@ -12,6 +12,7 @@ import io.github.plenglin.goggle.devices.weather.Thermometer
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.log4j.BasicConfigurator
+import org.apache.log4j.Logger
 import java.awt.Point
 import java.awt.event.KeyEvent
 import java.security.Key
@@ -20,6 +21,8 @@ import javax.swing.SwingUtilities
 
 fun main(args: Array<String>) {
     BasicConfigurator.configure()
+
+    val log = Logger.getLogger("Main")
 
     val dsp = DebugSliderPanel()
     val accX = dsp.createControllableObject("accX", -10.0, 10.0, 0.0)
@@ -82,7 +85,7 @@ fun main(args: Array<String>) {
     )
 
     SwingUtilities.invokeLater {
-        println("Creating Emulated SSD1306")
+        log.info("Creating Emulated SSD1306")
         JFrame("Goggle Epoxy Test").apply {
             add(ssd)
             pack()
@@ -96,7 +99,7 @@ fun main(args: Array<String>) {
     }
 
     SwingUtilities.invokeLater {
-        println("Creating slider panel")
+        log.info("Creating slider panel")
         JFrame("Sliders").apply {
             add(dsp)
             pack()
@@ -105,6 +108,6 @@ fun main(args: Array<String>) {
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         }
     }
-    println("Running context")
-    Context(Resources(), hw).run()
+    log.info("Running context")
+    Context(Resources(), hw, 1.0, 500000).run()
 }

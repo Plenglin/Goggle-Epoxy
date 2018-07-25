@@ -63,6 +63,7 @@ class HomeSensorsActivity : Activity() {
         drawAtPoint(trLongitude.getColumn(LONG_MAT_WIDTH + 3)) {
             g.drawString("S", it[0].toInt() + 64, it[1].toInt() + 32)
         }
+        //println()
 
         g.drawString("${"%.1f".format(temp)}C", 0, 48)
         g.drawString("${"%.1f".format(pres)}kPa", 0, 56)
@@ -85,12 +86,12 @@ class HomeSensorsActivity : Activity() {
         const val LONG_INCREMENT: Int = 15
         const val LONG_COUNT: Int = 360 / LONG_INCREMENT
         const val LONG_MAT_WIDTH: Int = LONG_COUNT * 2
-        const val LONG_LENGTH: Double = 0.03
+        const val LONG_LENGTH: Double = 0.01
 
         const val LAT_INCREMENT: Int = 15
         const val LAT_COUNT: Int = 360 / LAT_INCREMENT
         const val LAT_MAT_WIDTH: Int = LAT_COUNT * 2
-        const val LAT_LENGTH: Double = 0.1
+        const val LAT_LENGTH: Double = 0.01
 
         /**
          * 3-vectors embedded in a nx3 matrix. Last 4 vectors represent ENWS in that order.

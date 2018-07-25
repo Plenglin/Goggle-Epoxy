@@ -32,20 +32,24 @@ class ActivityManager(val ctx: Context) : Command() {
             }
             is PopActivityOperation -> {
                 currentActivity?.apply {
+                    log.info("Stopping {}", this)
                     suspend()
                     stop()
                 }
                 val tmp = stack.pop()
+                log.info("Popped {} from back stack", tmp)
                 currentActivity = tmp
                 tmp?.resume()
             }
             is SwapActivityOperation -> {
                 currentActivity?.apply {
+                    log.info("Stopping {}", this)
                     suspend()
                     stop()
                 }
                 currentActivity = op.newActivity
                 op.newActivity.let {
+                    log.info("Initializing {}", this)
                     it.ctx = this.ctx
                     it.start()
                     it.resume()

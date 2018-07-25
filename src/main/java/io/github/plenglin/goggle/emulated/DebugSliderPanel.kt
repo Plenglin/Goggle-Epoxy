@@ -19,7 +19,6 @@ internal class SliderObject(sliderLabel: String, val min: Double, val max: Doubl
     val text: JLabel = JLabel(sliderLabel)
 
     init {
-        println("${slider.minimum}, ${slider.maximum}, ${slider.value}")
         layout = BoxLayout(this, BoxLayout.PAGE_AXIS)
         add(slider)
         add(text)

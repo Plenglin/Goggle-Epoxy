@@ -17,14 +17,14 @@ class ButtonKeyboard(override val name: String, val key: Int) : Button, KeyListe
     override fun keyPressed(e: KeyEvent) {
         if (e.keyCode == key) {
             isPressed = true
-            log.debug("{}: {}", key, isPressed)
+            log.debug("{}: {}", name, isPressed)
         }
     }
 
     override fun keyReleased(e: KeyEvent) {
         if (e.keyCode == key) {
             isPressed = false
-            log.debug("{}: {}", key, isPressed)
+            log.debug("{}: {}", name, isPressed)
         }
     }
 }
