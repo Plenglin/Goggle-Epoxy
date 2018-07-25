@@ -1,4 +1,4 @@
-package io.github.plenglin.goggle.hardware
+package io.github.plenglin.goggle.emulated
 
 import io.github.plenglin.goggle.devices.display.Display
 import io.github.plenglin.goggle.util.scheduler.Command

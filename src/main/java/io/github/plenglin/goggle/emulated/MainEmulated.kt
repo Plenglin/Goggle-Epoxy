@@ -1,12 +1,14 @@
-package io.github.plenglin.goggle
+package io.github.plenglin.goggle.emulated
 
+import io.github.plenglin.goggle.Context
+import io.github.plenglin.goggle.Hardware
+import io.github.plenglin.goggle.Resources
 import io.github.plenglin.goggle.devices.motion.Accelerometer
 import io.github.plenglin.goggle.devices.motion.Gyroscope
 import io.github.plenglin.goggle.devices.motion.Magnetometer
 import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
-import io.github.plenglin.goggle.hardware.DisplaySwingWindow
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import javax.swing.JFrame
