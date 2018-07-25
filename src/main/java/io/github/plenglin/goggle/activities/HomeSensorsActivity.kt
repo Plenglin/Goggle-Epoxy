@@ -101,62 +101,65 @@ class HomeSensorsActivity : Activity() {
     companion object {
 
         const val LONG_INCREMENT: Int = 15
-        const val LONG_COUNT: Int = 360 / LONG_INCREMENT
-        const val LONG_MAT_WIDTH: Int = LONG_COUNT * 2
         const val LONG_LENGTH: Double = 0.01
 
         const val LAT_Y_INCREMENT: Int = 10
         const val LAT_X_INCREMENT: Int = 45
-        const val LAT_Y_COUNT: Int = 360 / LAT_Y_INCREMENT
-        const val LAT_X_COUNT: Int = 180 / LAT_X_INCREMENT
-        const val LAT_MAT_WIDTH: Int = LAT_X_COUNT * LAT_Y_COUNT * 2
         const val LAT_LENGTH: Double = 0.005
 
         /**
          * 3-vectors embedded in a nx3 matrix. Last 4 vectors represent ENWS in that order.
          */
         val LONGITUDE_LINES: List<Line> by lazy {
-            (0 until LONG_COUNT).map { i ->
-                val a = Math.toRadians((i * LONG_INCREMENT).toDouble())
-                val cos = Math.cos(a)
-                val sin = Math.sin(a)
-                val p1 = doubleArrayOf(cos, LONG_LENGTH, sin)
-                val p2 = doubleArrayOf(cos, -LONG_LENGTH, sin)
-                p1 to p2
-            }
+            (0 until 360 step LONG_INCREMENT)
+                    .filter { it % 45 != 0 }
+                    .map { d ->
+                        val a = Math.toRadians(d.toDouble())
+                        val cos = Math.cos(a)
+                        val sin = Math.sin(a)
+                        val p1 = doubleArrayOf(cos, LONG_LENGTH, sin)
+                        val p2 = doubleArrayOf(cos, -LONG_LENGTH, sin)
+                        p1 to p2
+                    }
         }
 
         /**
          * 3-vectors embedded in a nx3 matrices.
          */
         val LATITUDE_LINES: List<Line> by lazy {
-            val base = (0 until LAT_Y_COUNT).map { i ->
-                val a = Math.toRadians((i * LAT_Y_INCREMENT).toDouble())
-                val cos = Math.cos(a)
-                val sin = Math.sin(a)
-                doubleArrayOf(LAT_LENGTH, cos, sin) to doubleArrayOf(-LAT_LENGTH, cos, sin)
-            }
+            val base = (0 until 360 step LAT_Y_INCREMENT)
+                    .filter {
+                        it % 90 != 0
+                    }
+                    .map { d ->
+                        val a = Math.toRadians(d.toDouble())
+                        val cos = Math.cos(a)
+                        val sin = Math.sin(a)
+                        doubleArrayOf(LAT_LENGTH, cos, sin) to doubleArrayOf(-LAT_LENGTH, cos, sin)
+                    }
             val out = mutableListOf<Line>()
             out.addAll(base)
-            (1 until LAT_X_COUNT).forEach { i ->
-                val a = Math.toRadians((i * LAT_X_INCREMENT).toDouble())
-                val cos = Math.cos(a)
-                val sin = Math.sin(a)
+            (LAT_X_INCREMENT until 180 step LAT_X_INCREMENT)
+                    .forEach { i ->
+                        val a = Math.toRadians((i * LAT_X_INCREMENT).toDouble())
+                        val cos = Math.cos(a)
+                        val sin = Math.sin(a)
 
-                val rot = MatrixUtils.createRealMatrix(arrayOf(
-                        doubleArrayOf(cos, 0.0, sin),
-                        doubleArrayOf(0.0, 1.0, 0.0),
-                        doubleArrayOf(sin, 0.0, -cos)
-                ))
-                base.forEach {
-                    out.add(rot.multiply(MatrixUtils.createColumnRealMatrix(it.first)).getColumn(0) to
-                            rot.multiply(MatrixUtils.createColumnRealMatrix(it.second)).getColumn(0))
-                }
-            }
+                        val rot = MatrixUtils.createRealMatrix(arrayOf(
+                                doubleArrayOf(cos, 0.0, sin),
+                                doubleArrayOf(0.0, 1.0, 0.0),
+                                doubleArrayOf(sin, 0.0, -cos)
+                        ))
+                        base.forEach {
+                            out.add(rot.multiply(MatrixUtils.createColumnRealMatrix(it.first)).getColumn(0) to
+                                    rot.multiply(MatrixUtils.createColumnRealMatrix(it.second)).getColumn(0))
+                        }
+                    }
             out
+
         }
 
-        val INV_SQRT_2 = 1 / Math.sqrt(2.0)
+        private val INV_SQRT_2 = 1 / Math.sqrt(2.0)
 
         val SYMBOLS: List<Pair<String, DoubleArray>> = listOf(
                 "N" to doubleArrayOf(0.0, 0.0, 1.0),
