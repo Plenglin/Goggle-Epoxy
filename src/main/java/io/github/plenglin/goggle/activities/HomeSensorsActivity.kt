@@ -1,6 +1,8 @@
 package io.github.plenglin.goggle.activities
 
 import io.github.plenglin.goggle.util.activity.Activity
+import io.github.plenglin.goggle.util.input.ButtonInputEvent
+import io.github.plenglin.goggle.util.input.InputEvent
 import org.apache.commons.math3.linear.MatrixUtils
 import java.awt.BasicStroke
 import java.awt.Graphics2D
@@ -10,12 +12,21 @@ class HomeSensorsActivity : Activity() {
 
     private lateinit var g: Graphics2D
 
+    private fun onInput(e: InputEvent) {
+        when (e) {
+            ButtonInputEvent("z", true) -> {
+                ctx.activity.popActivity()
+            }
+        }
+    }
+
     override fun start() {
         g = ctx.hardware.display.createGraphics()
         //g.font = Font.createFont(Font.)
     }
 
     override fun resume() {
+        ctx.input.listener = this::onInput
         g.stroke = BasicStroke(1.2f)
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF)
     }
@@ -60,6 +71,7 @@ class HomeSensorsActivity : Activity() {
 
     override fun stop() {
         g.dispose()
+        ctx.input.listener = {}
     }
 
     private inline fun drawAtPoint(pt: DoubleArray, action: (DoubleArray) -> Unit) {

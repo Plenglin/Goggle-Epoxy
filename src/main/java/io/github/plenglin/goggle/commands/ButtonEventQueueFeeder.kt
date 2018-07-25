@@ -16,7 +16,7 @@ class ButtonEventQueueFeeder(private val btn: Button, private val queue: Queue<I
     override fun update(dt: Int) {
         val currentState = btn.isPressed
         if (currentState != prev) {
-            queue.offer(ButtonInputEvent(btn, currentState))
+            queue.offer(ButtonInputEvent(btn.name, currentState))
             prev = currentState
         }
     }

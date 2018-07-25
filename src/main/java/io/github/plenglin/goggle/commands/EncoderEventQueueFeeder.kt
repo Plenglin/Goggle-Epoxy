@@ -13,7 +13,7 @@ class EncoderEventQueueFeeder(private val enc: Encoder, private val queue: Queue
         val currentTicks = enc.ticks
         val delta: Int = (currentTicks - last).toInt()
         if (delta != 0) {
-            queue.offer(EncoderInputEvent(enc, delta))
+            queue.offer(EncoderInputEvent(enc.name, delta))
             last = currentTicks
         }
     }

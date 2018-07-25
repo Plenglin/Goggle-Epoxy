@@ -1,5 +1,6 @@
 package io.github.plenglin.goggle
 
+import io.github.plenglin.goggle.activities.BlankActivity
 import io.github.plenglin.goggle.activities.HomeSensorsActivity
 import io.github.plenglin.goggle.commands.ButtonEventQueueFeeder
 import io.github.plenglin.goggle.commands.EncoderEventQueueFeeder
@@ -25,9 +26,10 @@ class Context(val resources: Resources, val hardware: Hardware) {
             scheduler.addCommand(EncoderEventQueueFeeder(it, input.queue))
         }
         scheduler.addCommand(orientation)
+        scheduler.addCommand(input)
         scheduler.addCommand(activity)
 
-        activity.pushActivity(HomeSensorsActivity())
+        activity.pushActivity(BlankActivity())
 
         while (true) {
             scheduler.update()

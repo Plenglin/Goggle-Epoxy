@@ -13,6 +13,8 @@ import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.log4j.BasicConfigurator
 import java.awt.Point
+import java.awt.event.KeyEvent
+import java.security.Key
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
@@ -61,10 +63,21 @@ fun main(args: Array<String>) {
 
     val ssd = DisplaySwingWindow()
 
+    val btnX = ButtonKeyboard("x", KeyEvent.VK_E)
+    val btnY = ButtonKeyboard("y", KeyEvent.VK_D)
+    val btnZ = ButtonKeyboard("z", KeyEvent.VK_G)
+    val btnS = ButtonKeyboard("s", KeyEvent.VK_V)
+    val btnH = ButtonKeyboard("h", KeyEvent.VK_H)
+
+    val encSel = EncoderKeyboard("sel", KeyEvent.VK_R, KeyEvent.VK_F)
+
+    val buttons = listOf(btnH, btnS, btnX, btnY, btnZ)
+    val encoders = listOf(encSel)
+
     val hw = Hardware(
             acc = mpu, mag = mpu, gyro = mpu,
             alt = weather, bar = weather, therm = weather,
-            display = ssd,
+            display = ssd, buttons = buttons, encoders = encoders,
             commands = listOf(ssd.updateCommand)
     )
 
@@ -73,6 +86,8 @@ fun main(args: Array<String>) {
         JFrame("Goggle Epoxy Test").apply {
             add(ssd)
             pack()
+            buttons.forEach(this::addKeyListener)
+            encoders.forEach(this::addKeyListener)
             isVisible = true
             isResizable = false
             location = Point(100, 100)
