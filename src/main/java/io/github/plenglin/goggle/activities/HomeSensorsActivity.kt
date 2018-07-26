@@ -67,20 +67,6 @@ class HomeSensorsActivity : Activity() {
                 g.drawString(s, it[0].roundToInt() - x / 2, it[1].roundToInt() + y / 2)
             }
         }
-        /*
-        drawAtPoint(trLongitude.getColumn(LONG_MAT_WIDTH)) {
-            g.drawString("E", it[0].toInt() + 64, it[1].toInt() + 32)
-        }
-        drawAtPoint(trLongitude.getColumn(LONG_MAT_WIDTH + 1)) {
-            g.drawString("N", it[0].toInt() + 64, it[1].toInt() + 32)
-        }
-        drawAtPoint(trLongitude.getColumn(LONG_MAT_WIDTH + 2)) {
-            g.drawString("W", it[0].toInt() + 64, it[1].toInt() + 32)
-        }
-        drawAtPoint(trLongitude.getColumn(LONG_MAT_WIDTH + 3)) {
-            g.drawString("S", it[0].toInt() + 64, it[1].toInt() + 32)
-        }*/
-        //println()
 
         g.drawString("${"%.1f".format(temp)}C", 0, 48)
         g.drawString("${"%.1f".format(pres)}kPa", 0, 56)

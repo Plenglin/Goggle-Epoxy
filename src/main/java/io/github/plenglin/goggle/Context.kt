@@ -11,10 +11,17 @@ import org.slf4j.LoggerFactory
 
 class Context(val resources: Resources,
               val hardware: Hardware,
-              val oriCompensation: Double = 0.02,
+              oriCompensation: Double = 0.02,
               val sleepDelayNanos: Int = 0) {
 
     val log = LoggerFactory.getLogger(javaClass.name)
+
+    init {
+        if (oriCompensation > 0.1) {
+            log.warn("Warning! Orientation compensation is a very high {}. This may result in an unstable headset, " +
+                    "unless you know what you are doing.", oriCompensation)
+        }
+    }
 
     val scheduler: Scheduler = Scheduler()
     val activity: ActivityManager = ActivityManager(this)
@@ -23,11 +30,6 @@ class Context(val resources: Resources,
 
     fun run() {
         log.info("Beginning Context {}", this)
-
-        if (oriCompensation > 0.1) {
-            log.warn("Warning! Orientation compensation is a very high {}. This may result in an unstable headset, " +
-                    "unless you know what you are doing.", oriCompensation)
-        }
 
         hardware.commands.forEach(scheduler::addCommand)
         hardware.buttons.forEach {
