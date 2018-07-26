@@ -1,6 +1,6 @@
 package io.github.plenglin.goggle
 
-import io.github.plenglin.goggle.app.GoggleApp
+import io.github.plenglin.goggle.util.app.GoggleApp
 import io.github.plenglin.goggle.util.activity.Activity
 
 class TestApp : GoggleApp {

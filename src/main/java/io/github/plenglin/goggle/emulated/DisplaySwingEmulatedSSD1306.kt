@@ -9,18 +9,22 @@ import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import javax.swing.JPanel
 
-class DisplaySwingWindow : JPanel(), Display {
+class DisplaySwingEmulatedSSD1306 : JPanel(), Display {
+
+    override val displayWidth: Int = 128
+    override val displayHeight: Int = 64
+
     private val buf = BufferedImage(128, 64, BufferedImage.TYPE_BYTE_BINARY)
 
     override fun createGraphics(): Graphics2D = buf.createGraphics()
 
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g!!)
-        g.drawImage(buf, 0, 0, WIDTH, HEIGHT, 0, 0, 128, 64, null)
+        g.drawImage(buf, 0, 0, SWING_WIDTH, SWING_HEIGHT, 0, 0, 128, 64, null)
     }
 
     override fun getPreferredSize(): Dimension {
-        return Dimension(WIDTH, HEIGHT)
+        return Dimension(SWING_WIDTH, SWING_HEIGHT)
     }
 
     override fun getBackground(): Color {
@@ -29,15 +33,15 @@ class DisplaySwingWindow : JPanel(), Display {
 
     val updateCommand = object : Command() {
         override fun initialize() {
-            this@DisplaySwingWindow.repaint()
+            this@DisplaySwingEmulatedSSD1306.repaint()
         }
         override fun update(dt: Int) {
-            this@DisplaySwingWindow.repaint()
+            this@DisplaySwingEmulatedSSD1306.repaint()
         }
     }
 
     companion object {
-        val WIDTH = 512
-        val HEIGHT = 256
+        const val SWING_WIDTH = 512
+        const val SWING_HEIGHT = 256
     }
 }

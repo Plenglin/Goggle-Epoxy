@@ -1,4 +1,4 @@
-package io.github.plenglin.goggle.app
+package io.github.plenglin.goggle.util.app
 
 class GoggleAppRegistry {
 

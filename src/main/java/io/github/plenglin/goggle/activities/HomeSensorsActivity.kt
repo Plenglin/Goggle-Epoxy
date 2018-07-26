@@ -22,6 +22,9 @@ class HomeSensorsActivity : Activity() {
             ButtonInputEvent("z", true) -> {
                 ctx.activity.popActivity()
             }
+            ButtonInputEvent("h", true) -> {
+                ctx.activity.pushActivity(AppListingActivity())
+            }
         }
     }
 

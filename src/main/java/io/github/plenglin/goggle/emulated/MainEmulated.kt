@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
 
     }
 
-    val ssd = DisplaySwingWindow()
+    val ssd = DisplaySwingEmulatedSSD1306()
 
     val btnX = ButtonKeyboard("x", KeyEvent.VK_E)
     val btnY = ButtonKeyboard("y", KeyEvent.VK_D)

@@ -9,11 +9,15 @@ import java.awt.image.DataBufferByte
 
 class DisplaySSD1306(val dev: I2CDevice) : Command(), Display {
 
+    override val displayWidth: Int = 128
+    override val displayHeight: Int = 64
+
     private val image = BufferedImage(128, 64, BufferedImage.TYPE_BYTE_BINARY)
 
     override fun createGraphics(): Graphics2D = image.createGraphics()
 
     override fun initialize() {
+        // TODO PUT SHIT HERE
         //dev.write()
     }
 
