@@ -1,5 +1,5 @@
 
-# Created by https://www.gitignore.io/api/git,java,linux,gradle,kotlin,windows,intellij+all,eclipse
+# Created by https://www.gitignore.io/api/git,java,linux,gradle,kotlin,windows,intellij+all,eclipse,libreoffice
 
 ### Eclipse ###
 
@@ -185,6 +185,10 @@ hs_err_pid*
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 
+### LibreOffice ###
+# LibreOffice locks
+.~lock.*#
+
 ### Linux ###
 *~
 
@@ -242,4 +246,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 
-# End of https://www.gitignore.io/api/git,java,linux,gradle,kotlin,windows,intellij+all,eclipse
+# End of https://www.gitignore.io/api/git,java,linux,gradle,kotlin,windows,intellij+all,eclipse,libreoffice

@@ -8,6 +8,6 @@ class AstronomyApp : GoggleApp {
     override val appLabel: String = "Astronomy"
 
     override fun createInitialActivity(): Activity {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return StarsActivity()
     }
 }

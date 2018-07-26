@@ -7,23 +7,24 @@ import java.nio.charset.Charset
 object AstronomyResources {
 
     const val LIGHTYEARS_PER_PARSEC = 3.26156
+    const val RADIANS_PER_HOUR = Math.PI / 12
 
     /**
      * Stars, listed in order of apparent magnitude.
      */
     val stars: List<Star> by lazy {
-        val stream = javaClass.classLoader.getResourceAsStream("astronomy/hygfull.csv")
+        val stream = javaClass.classLoader.getResourceAsStream("astronomy/hygdata.csv")
         val parser = CSVParser.parse(stream, Charset.defaultCharset(), CSVFormat.DEFAULT.withHeader())
         parser.records.map {
             Star(
-                    name = it.get("ProperName").let { name ->
+                    name = it.get("proper").let { name ->
                         if (name.isEmpty() || name == " ") null else name
                     },
-                    rightAscension = Math.toRadians(it.get("RA").toDouble()),
-                    declination = Math.toRadians(it.get("Dec").toDouble()),
-                    distance = it.get("Distance").toDouble() * LIGHTYEARS_PER_PARSEC,
-                    apparentMagnitude = it.get("Mag").toDouble(),
-                    colorIndex = it.get("ColorIndex").toDoubleOrNull())
+                    rightAscension = it.get("ra").toDouble() * RADIANS_PER_HOUR,
+                    declination = Math.toRadians(it.get("dec").toDouble()),
+                    distance = it.get("dist").toDouble() * LIGHTYEARS_PER_PARSEC,
+                    apparentMagnitude = it.get("mag").toDouble(),
+                    colorIndex = it.get("ci").toDoubleOrNull())
         }.sortedBy { it.apparentMagnitude }
     }
 
