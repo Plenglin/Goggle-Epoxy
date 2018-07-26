@@ -3,12 +3,10 @@ package io.github.plenglin.goggleapp.astronomy
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.space.OrthographicCamera
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.slf4j.LoggerFactory
 import java.awt.Color
 import java.awt.Graphics2D
-import java.awt.event.InputEvent
 import kotlin.math.roundToInt
 
 class StarsActivity : Activity() {
@@ -51,6 +49,20 @@ class StarsActivity : Activity() {
                 g.fillRect(pt[0].roundToInt(), pt[1].roundToInt(), 1, 1)
             }
         }
+
+        g.font = ctx.resources.fontPrimary
+        val metrics = g.fontMetrics
+
+        AstronomyResources.SYMBOLS.forEach { (s, p) ->
+            cam.project(p).let {
+                if (it[2] > 0) {
+                    val x = metrics.stringWidth(s)
+                    val y = metrics.height
+                    g.drawString(s, it[0].roundToInt() - x / 2, it[1].roundToInt() + y / 2)
+                }
+            }
+        }
+
     }
 
     override fun suspend() {

@@ -10,4 +10,5 @@ class AstronomyApp : GoggleApp {
     override fun createInitialActivity(): Activity {
         return StarsActivity()
     }
+
 }

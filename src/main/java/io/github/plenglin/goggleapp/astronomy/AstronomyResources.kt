@@ -28,6 +28,15 @@ object AstronomyResources {
         }.sortedBy { it.apparentMagnitude }
     }
 
+    val SYMBOLS: List<Pair<String, DoubleArray>> = listOf(
+            "N" to doubleArrayOf(0.0, 0.0, 1.0),
+            "E" to doubleArrayOf(1.0, 0.0, 0.0),
+            "S" to doubleArrayOf(0.0, 0.0, -1.0),
+            "W" to doubleArrayOf(-1.0, 0.0, 0.0),
+            "UP" to doubleArrayOf(0.0, -1.0, 0.0),
+            "DN" to doubleArrayOf(0.0, 1.0, 0.0)
+    )
+
 }
 
 fun main(args: Array<String>) {
