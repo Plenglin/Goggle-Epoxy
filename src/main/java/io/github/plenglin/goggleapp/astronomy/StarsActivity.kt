@@ -25,7 +25,7 @@ class StarsActivity : Activity() {
     private lateinit var offset: Rotation
 
     private val cam = OrthographicCamera()
-    private val stars = AstronomyResources.stars.filter { it.apparentMagnitude < 3.0 }
+    private val stars = AstronomyResources.stars.filter { it.apparentMagnitude < 2.5 }
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
@@ -40,7 +40,7 @@ class StarsActivity : Activity() {
                 ButtonInputEvent("h", true) -> ctx.activity.popActivity()
             }
         }
-        log.debug("Working with {} stars: ", stars.size, stars)
+        log.debug("We have {} stars: ", stars.size, stars)
     }
 
     override fun update(dt: Int) {
@@ -60,14 +60,12 @@ class StarsActivity : Activity() {
         }
 
         cam.project(doubleArrayOf(0.0, 0.0, 1.0)).let {
-            println(it.contentToString())
             if (it[2] > 0) {
                 g.drawString("CN", it[0].roundToInt(), it[1].roundToInt())
             }
         }
 
         cam.project(doubleArrayOf(0.0, 0.0, -1.0)).let {
-            println(it.contentToString())
             if (it[2] > 0) {
                 g.drawString("CS", it[0].roundToInt(), it[1].roundToInt())
             }

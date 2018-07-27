@@ -36,6 +36,9 @@ fun main(args: Array<String>) {
     val pres = dsp.createControllableObject("pres", 50.0, 150.0, 60.0)
 
     val mpu = object : Accelerometer, Magnetometer, Gyroscope {
+        override val angularVelocity: Vector3D
+            get() = Vector3D(0.0, 0.0, 0.0)
+
         override val acceleration: Vector3D
             get() = Vector3D(
                     accX(),
@@ -50,7 +53,6 @@ fun main(args: Array<String>) {
                     magZ()
             )
 
-        override fun getDeltaRotation(dt: Int): Rotation = Rotation.IDENTITY
     }
 
     val weather = object : Altimeter, Barometer, Thermometer {

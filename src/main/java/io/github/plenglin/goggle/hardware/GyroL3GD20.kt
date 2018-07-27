@@ -8,28 +8,22 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 
 
 class GyroL3GD20(val dev: I2CDevice, scale: GyroL3GD20Scale) : Gyroscope, Command() {
-    private val angVel = IntArray(3)
+    override var angularVelocity: Vector3D = Vector3D.ZERO
+        private set
 
     private val sclMsg = scale.code
     private val multiplier = scale.scl * Math.PI / 180 / 32768
-
-    override fun getDeltaRotation(dt: Int): Rotation {
-        val vec = Vector3D(
-                (angVel[0] * dt).toDouble(),
-                (angVel[1] * dt).toDouble(),
-                (angVel[2] * dt).toDouble())
-                .scalarMultiply(multiplier / 1000)
-        return Rotation(vec, vec.norm)
-    }
 
     override fun initialize() {
         dev.write(0x20, sclMsg.toByte())
     }
 
     override fun update(dt: Int) {
-        angVel[0] = (dev.read(0x28) shl 8) or dev.read(0x29)
-        angVel[1] = (dev.read(0x2a) shl 8) or dev.read(0x2b)
-        angVel[2] = (dev.read(0x2c) shl 8) or dev.read(0x2d)
+        angularVelocity = Vector3D(
+            ((dev.read(0x28) shl 8) or dev.read(0x29)) * multiplier,
+            ((dev.read(0x2a) shl 8) or dev.read(0x2b)) * multiplier,
+            ((dev.read(0x2c) shl 8) or dev.read(0x2d)) * multiplier
+        )
     }
 }
 
