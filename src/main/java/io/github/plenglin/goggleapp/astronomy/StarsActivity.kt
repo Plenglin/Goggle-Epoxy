@@ -1,6 +1,8 @@
 package io.github.plenglin.goggleapp.astronomy
 
 import io.github.plenglin.goggle.STD_AXES_TO_ORI
+import io.github.plenglin.goggle.commands.PeriodicCommand
+import io.github.plenglin.goggle.commands.RunCommand
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
@@ -30,19 +32,30 @@ class StarsActivity : Activity() {
     private var endIndex = 0
     private var appMag = 30
 
+    private lateinit var offsetUpdater: PeriodicCommand
+
     private fun updateApparentMagnitude() {
         endIndex = AstronomyResources.stars.indexOfLast { it.apparentMagnitude <= appMag / 10.0 }
     }
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
-        offset = getOffset()
-        cam.scale = 128.0
-        cam.translation = Vector3D(64.0, 32.0, 0.0)
     }
 
     override fun resume() {
         updateApparentMagnitude()
+        offset = getOffset()
+        cam.scale = 128.0
+        cam.translation = Vector3D(64.0, 32.0, 0.0)
+        offsetUpdater = PeriodicCommand(
+                ctx.scheduler,
+                RunCommand {
+                    log.debug("Updating offset")
+                    offset = getOffset()
+                }, 100000L, 100000L
+        )
+        ctx.scheduler.addCommand(offsetUpdater)
+
         ctx.input.listener = {
             when (it) {
                 ButtonInputEvent("h", true) -> ctx.activity.popActivity()
@@ -119,7 +132,9 @@ class StarsActivity : Activity() {
         return STD_AXES_TO_ORI.applyTo(Rotation(RotationOrder.XYZ, 0.0, Math.PI / 2 - dec, ra))
     }
 
-
+    override fun suspend() {
+        offsetUpdater.stopExecution()
+    }
 
     override fun stop() {
         g.dispose()

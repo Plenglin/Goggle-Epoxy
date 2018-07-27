@@ -7,15 +7,18 @@ class Scheduler {
     private val log = LoggerFactory.getLogger(javaClass.name)
 
     private val commands: MutableList<Command> = mutableListOf()
+    private val commandBuffer: MutableList<Command> = mutableListOf()
 
     fun addCommand(cmd: Command) {
         if (cmd.isRunning) {
             throw RuntimeException("Command has already been initialized!")
         }
-        commands.add(cmd)
+        commandBuffer.add(cmd)
     }
 
     fun update() {
+        commands.addAll(commandBuffer)
+        commandBuffer.clear()
         commands.forEach { c ->
             log.trace("Processing {}", c)
             if (!c.isRunning) {
