@@ -1,7 +1,6 @@
 package io.github.plenglin.goggle.util.scheduler
 
 import org.slf4j.LoggerFactory
-import java.util.*
 
 class Scheduler {
 

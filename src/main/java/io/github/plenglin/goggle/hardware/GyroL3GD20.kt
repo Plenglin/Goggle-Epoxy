@@ -3,7 +3,6 @@ package io.github.plenglin.goggle.hardware
 import com.pi4j.io.i2c.I2CDevice
 import io.github.plenglin.goggle.devices.motion.Gyroscope
 import io.github.plenglin.goggle.util.scheduler.Command
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 
 

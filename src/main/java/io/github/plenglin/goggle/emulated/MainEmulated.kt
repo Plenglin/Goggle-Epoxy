@@ -117,5 +117,5 @@ fun main(args: Array<String>) {
     }, 100L, 20L)
 
     log.info("Running context")
-    Context(Resources(), hw, 1.0, 20L).run()
+    Context(Resources(), hw, 1.0, 15L).run()
 }

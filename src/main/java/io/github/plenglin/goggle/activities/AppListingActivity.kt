@@ -16,6 +16,8 @@ class AppListingActivity : Activity() {
     private var iTop = 0
     private var iSel = 0
 
+    private var redraw = true
+
     override fun start() {
         g = ctx.hardware.display.createGraphics()
         apps = ctx.appRegistry.listApps().map { (_, app) -> app.appLabel to app }.sortedBy { it.first }
@@ -23,7 +25,7 @@ class AppListingActivity : Activity() {
             when (it) {
                 ButtonInputEvent("s", true) -> {
                     val a = apps[iSel].second
-                    log.debug("User selected app at index %s corresponding to %s", iSel, a)
+                    log.debug("User selected app at index {} corresponding to {}", iSel, a)
                     ctx.activity.swapActivity(a.createInitialActivity())
                 }
                 ButtonInputEvent("h", true) -> {
@@ -31,32 +33,38 @@ class AppListingActivity : Activity() {
                 }
                 EncoderInputEvent("sel", 1) -> {
                     iSel = (iSel + apps.size + 1) % apps.size
+                    redraw = true
                 }
                 EncoderInputEvent("sel", -1) -> {
                     iSel = (iSel + apps.size - 1) % apps.size
+                    redraw = true
                 }
             }
         }
     }
 
     override fun update(dt: Int) {
-        g.clearRect(0, 0, 128, 64)
         g.font = ctx.resources.fontPrimary
         val metrics = g.fontMetrics
-
         val rows = 64 / metrics.height
-
         if (iSel - iTop >= rows) {
             iTop = iSel - rows + 1
-            log.debug("Putting iTop at %s", iTop)
+            log.debug("Putting iTop at {}", iTop)
         } else if (iTop > iSel) {
             iTop = iSel
         }
+
+        if (!redraw) {
+            return
+        }
+        log.debug("redrawing")
+        g.clearRect(0, 0, 128, 64)
 
         for (i in 0 until minOf(apps.size, rows)) {
             g.drawString(apps[iTop + i].first, 10, i * metrics.height + metrics.height)
         }
         g.drawString(">", 2, (iSel - iTop) * metrics.height + metrics.height)
+        redraw = false
     }
 
     override fun stop() {
