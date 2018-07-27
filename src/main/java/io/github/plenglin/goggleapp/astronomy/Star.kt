@@ -29,8 +29,8 @@ data class Star(val name: String? = null,
      * Position on the celestial sphere.
      */
     val cSpherePosition by lazy {
-        val sinPhi = Math.cos(declination)
-        val cosPhi = -Math.sin(declination)
+        val sinPhi = Math.sin(Math.PI / 2 - declination)
+        val cosPhi = Math.cos(Math.PI / 2 - declination)
         doubleArrayOf(
                 sinPhi * Math.cos(rightAscension),
                 sinPhi * Math.sin(rightAscension),

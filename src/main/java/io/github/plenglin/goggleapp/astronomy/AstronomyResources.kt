@@ -9,6 +9,7 @@ object AstronomyResources {
     const val LIGHTYEARS_PER_PARSEC = 3.26156
     const val RADIANS_PER_HOUR = Math.PI / 12
     const val SECONDS_PER_YEAR = 31556926
+    const val SECONDS_PER_DAY = 86400
 
     /**
      * Stars, listed in order of apparent magnitude.
@@ -38,10 +39,4 @@ object AstronomyResources {
             "DN" to doubleArrayOf(0.0, 1.0, 0.0)
     )
 
-}
-
-fun main(args: Array<String>) {
-    AstronomyResources.stars.filter { it.name != null }.forEach {
-        println(it)
-    }
 }

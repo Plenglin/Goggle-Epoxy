@@ -25,7 +25,7 @@ class StarsActivity : Activity() {
     private lateinit var offset: Rotation
 
     private val cam = OrthographicCamera()
-    private val stars = AstronomyResources.stars.filter { it.apparentMagnitude < 2.5 }
+    private val stars = AstronomyResources.stars.filter { it.apparentMagnitude < 3.0 }
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
@@ -96,7 +96,7 @@ class StarsActivity : Activity() {
         val angleToEquinox = 2 * Math.PI * equinoxDifference / AstronomyResources.SECONDS_PER_YEAR
 
         val timeOfDay = now.hour * 3600 + now.minute * 60 + now.second
-        val angleToMidnight = 2 * Math.PI * timeOfDay / 1440
+        val angleToMidnight = 2 * Math.PI * timeOfDay / AstronomyResources.SECONDS_PER_DAY
 
         val ra = longitude + angleToEquinox + angleToMidnight - 180
         val dec = latitude

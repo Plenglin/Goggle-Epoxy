@@ -4,6 +4,7 @@ import io.github.plenglin.goggle.activities.BlankActivity
 import io.github.plenglin.goggle.commands.ButtonEventQueueFeeder
 import io.github.plenglin.goggle.commands.EncoderEventQueueFeeder
 import io.github.plenglin.goggle.util.OrientationIntegrator
+import io.github.plenglin.goggle.util.PlaceholderApp
 import io.github.plenglin.goggle.util.activity.ActivityManager
 import io.github.plenglin.goggle.util.app.GoggleAppRegistry
 import io.github.plenglin.goggle.util.input.InputManager
@@ -35,6 +36,10 @@ class Context(val resources: Resources,
 
         appRegistry.registerApp("io.github.plenglin.goggleapp.astronomy.AstronomyApp")
         appRegistry.registerApp("io.github.plenglin.goggleapp.tetris.TetrisApp")
+
+        for (i in 0..10) {
+            appRegistry.registerApp(PlaceholderApp("ph-$i", "Placeholder $i"))
+        }
 
         hardware.commands.forEach(scheduler::addCommand)
         hardware.buttons.forEach {
