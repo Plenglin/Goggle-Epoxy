@@ -8,6 +8,7 @@ object AstronomyResources {
 
     const val LIGHTYEARS_PER_PARSEC = 3.26156
     const val RADIANS_PER_HOUR = Math.PI / 12
+    const val SECONDS_PER_YEAR = 31556926
 
     /**
      * Stars, listed in order of apparent magnitude.
