@@ -15,7 +15,7 @@ object AstronomyResources {
      * Stars, listed in order of apparent magnitude.
      */
     val stars: List<Star> by lazy {
-        val stream = javaClass.classLoader.getResourceAsStream("astronomy/hygdata.csv")
+        val stream = javaClass.classLoader.getResourceAsStream("astronomy/hygdata-visible.csv")
         val parser = CSVParser.parse(stream, Charset.defaultCharset(), CSVFormat.DEFAULT.withHeader())
         parser.records.map {
             Star(

@@ -3,6 +3,7 @@ package io.github.plenglin.goggleapp.astronomy
 import io.github.plenglin.goggle.STD_AXES_TO_ORI
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
+import io.github.plenglin.goggle.util.input.EncoderInputEvent
 import io.github.plenglin.goggle.util.space.OrthographicCamera
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.RotationOrder
@@ -25,7 +26,13 @@ class StarsActivity : Activity() {
     private lateinit var offset: Rotation
 
     private val cam = OrthographicCamera()
-    private val stars = AstronomyResources.stars.filter { it.apparentMagnitude < 3.0 }
+
+    private var endIndex = 0
+    private var appMag = 30
+
+    private fun updateApparentMagnitude() {
+        endIndex = AstronomyResources.stars.indexOfLast { it.apparentMagnitude <= appMag / 10.0 }
+    }
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
@@ -35,12 +42,17 @@ class StarsActivity : Activity() {
     }
 
     override fun resume() {
+        updateApparentMagnitude()
         ctx.input.listener = {
             when (it) {
                 ButtonInputEvent("h", true) -> ctx.activity.popActivity()
+                is EncoderInputEvent -> {
+                    appMag = minOf(maxOf(appMag + it.delta, -10), 70)
+                    updateApparentMagnitude()
+                }
             }
         }
-        log.debug("We have {} stars: ", stars.size, stars)
+        log.debug("We have {} stars: ", AstronomyResources.stars.size, AstronomyResources.stars)
     }
 
     override fun update(dt: Int) {
@@ -51,10 +63,11 @@ class StarsActivity : Activity() {
         g.clearRect(0, 0, ctx.hardware.display.displayWidth, ctx.hardware.display.displayHeight)
         g.color = Color.white
 
-        stars.forEach {
-            val pt = cam.project(it.cSpherePosition)
+        for (i in 0 until endIndex) {
+            val star = AstronomyResources.stars[i]
+            val pt = cam.project(star.cSpherePosition)
             if (pt[2] > 0) {
-                log.trace("Drawing to {}: {}", pt, it)
+                log.trace("Drawing to {}: {}", pt, star)
                 g.fillRect(pt[0].roundToInt(), pt[1].roundToInt(), 1, 1)
             }
         }
@@ -87,6 +100,8 @@ class StarsActivity : Activity() {
             }
         }
 
+        g.drawString(appMag.toString(), 0, ctx.hardware.display.displayHeight)
+
     }
 
     private fun getOffset(): Rotation {
@@ -104,7 +119,9 @@ class StarsActivity : Activity() {
         return STD_AXES_TO_ORI.applyTo(Rotation(RotationOrder.XYZ, 0.0, Math.PI / 2 - dec, ra))
     }
 
-    override fun suspend() {
 
+
+    override fun stop() {
+        g.dispose()
     }
 }
