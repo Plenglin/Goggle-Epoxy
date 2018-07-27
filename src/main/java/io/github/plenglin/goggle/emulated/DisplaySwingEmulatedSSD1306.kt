@@ -2,10 +2,7 @@ package io.github.plenglin.goggle.emulated
 
 import io.github.plenglin.goggle.devices.display.Display
 import io.github.plenglin.goggle.util.scheduler.Command
-import java.awt.Color
-import java.awt.Dimension
-import java.awt.Graphics
-import java.awt.Graphics2D
+import java.awt.*
 import java.awt.image.BufferedImage
 import javax.swing.JPanel
 
@@ -32,11 +29,8 @@ class DisplaySwingEmulatedSSD1306 : JPanel(), Display {
     }
 
     val updateCommand = object : Command() {
-        override fun initialize() {
-            this@DisplaySwingEmulatedSSD1306.repaint()
-        }
         override fun update(dt: Int) {
-            this@DisplaySwingEmulatedSSD1306.repaint()
+            paintImmediately(Rectangle(0, 0, 128, 64))
         }
     }
 

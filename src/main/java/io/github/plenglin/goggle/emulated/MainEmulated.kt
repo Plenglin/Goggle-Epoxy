@@ -9,12 +9,12 @@ import io.github.plenglin.goggle.devices.motion.Magnetometer
 import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
-import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.log4j.BasicConfigurator
 import org.apache.log4j.Logger
 import java.awt.Point
 import java.awt.event.KeyEvent
+import java.util.*
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
 
     }
 
-    val ssd = DisplaySwingEmulatedSSD1306()
+    val screen = DisplaySwingEmulatedSSD1306()
 
     val btnX = ButtonKeyboard("x", KeyEvent.VK_E)
     val btnY = ButtonKeyboard("y", KeyEvent.VK_D)
@@ -81,14 +81,14 @@ fun main(args: Array<String>) {
     val hw = Hardware(
             acc = mpu, mag = mpu, gyro = mpu,
             alt = weather, bar = weather, therm = weather,
-            display = ssd, buttons = buttons, encoders = encoders,
-            commands = listOf(ssd.updateCommand)
+            display = screen, buttons = buttons, encoders = encoders,
+            commands = listOf(screen.updateCommand)
     )
 
     SwingUtilities.invokeLater {
         log.info("Creating Emulated SSD1306")
         JFrame("Goggle Epoxy Test").apply {
-            add(ssd)
+            add(screen)
             pack()
             buttons.forEach(this::addKeyListener)
             encoders.forEach(this::addKeyListener)
@@ -109,7 +109,13 @@ fun main(args: Array<String>) {
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         }
     }
+    val timer = Timer()
+    timer.scheduleAtFixedRate(object : TimerTask() {
+        override fun run() {
+            screen.repaint()
+        }
+    }, 100L, 20L)
 
     log.info("Running context")
-    Context(Resources(), hw, 1.0, 500000).run()
+    Context(Resources(), hw, 1.0, 20L).run()
 }

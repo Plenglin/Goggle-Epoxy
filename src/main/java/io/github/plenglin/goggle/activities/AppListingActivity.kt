@@ -26,6 +26,9 @@ class AppListingActivity : Activity() {
                     log.debug("User selected app at index %s corresponding to %s", iSel, a)
                     ctx.activity.swapActivity(a.createInitialActivity())
                 }
+                ButtonInputEvent("h", true) -> {
+                    ctx.activity.popActivity()
+                }
                 EncoderInputEvent("sel", 1) -> {
                     iSel = (iSel + apps.size + 1) % apps.size
                 }

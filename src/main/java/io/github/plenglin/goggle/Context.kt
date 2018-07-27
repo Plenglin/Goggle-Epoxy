@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory
 class Context(val resources: Resources,
               val hardware: Hardware,
               oriCompensation: Double = 0.02,
-              val sleepDelayNanos: Int = 0) {
+              val sleepDelay: Long = 0) {
 
     val log = LoggerFactory.getLogger(javaClass.name)
 
@@ -56,8 +56,8 @@ class Context(val resources: Resources,
 
         while (true) {
             scheduler.update()
-            if (sleepDelayNanos > 0) {
-                Thread.sleep(0, sleepDelayNanos)
+            if (sleepDelay > 0) {
+                Thread.sleep(sleepDelay)
             }
         }
     }

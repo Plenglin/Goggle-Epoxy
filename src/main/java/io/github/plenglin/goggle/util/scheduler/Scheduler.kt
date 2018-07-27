@@ -7,33 +7,34 @@ class Scheduler {
 
     private val log = LoggerFactory.getLogger(javaClass.name)
 
-    private val queue: Queue<Command> = LinkedList()
+    private val commands: MutableList<Command> = mutableListOf()
 
     fun addCommand(cmd: Command) {
         if (cmd.isRunning) {
             throw RuntimeException("Command has already been initialized!")
         }
-        queue.offer(cmd)
+        commands.add(cmd)
     }
 
     fun update() {
-        val c = queue.remove()
-        log.trace("Processing {}", c)
-        if (!c.isRunning) {
-            log.info("Initializing {}", c)
-            c.initialize()
-            c.isRunning = true
+        commands.forEach { c ->
+            log.trace("Processing {}", c)
+            if (!c.isRunning) {
+                log.info("Initializing {}", c)
+                c.initialize()
+                c.isRunning = true
+            }
+            log.trace("Updating {}", c)
+            val currentTime = System.currentTimeMillis()
+            c.update((currentTime - c.lastExecuted).toInt())
+            c.lastExecuted = currentTime
+            if (c.shouldTerminate()) {
+                log.info("Terminating {}", c)
+                c.terminate()
+                c.isRunning = false
+            }
         }
-        log.trace("Updating {}", c)
-        val currentTime = System.currentTimeMillis()
-        c.update((currentTime - c.lastExecuted).toInt())
-        c.lastExecuted = currentTime
-        if (c.shouldTerminate()) {
-            log.info("Terminating {}", c)
-            c.terminate()
-        } else {
-            queue.offer(c)
-        }
+        commands.removeAll { !it.isRunning }
     }
 
 }
