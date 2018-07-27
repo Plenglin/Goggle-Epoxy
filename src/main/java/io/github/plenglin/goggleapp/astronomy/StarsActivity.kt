@@ -32,6 +32,8 @@ class StarsActivity : Activity() {
     private var endIndex = 0
     private var appMag = 30
 
+    private var stopDisplayMagnitudeAfter = 0L
+
     private lateinit var offsetUpdater: PeriodicCommand
 
     private fun updateApparentMagnitude() {
@@ -47,6 +49,8 @@ class StarsActivity : Activity() {
         offset = getOffset()
         cam.scale = 128.0
         cam.translation = Vector3D(64.0, 32.0, 0.0)
+
+        stopDisplayMagnitudeAfter = System.currentTimeMillis() + 1000L
         offsetUpdater = PeriodicCommand(
                 ctx.scheduler,
                 RunCommand {
@@ -61,6 +65,7 @@ class StarsActivity : Activity() {
                 ButtonInputEvent("h", true) -> ctx.activity.popActivity()
                 is EncoderInputEvent -> {
                     appMag = minOf(maxOf(appMag + it.delta, -10), 70)
+                    stopDisplayMagnitudeAfter = System.currentTimeMillis() + 1000L
                     updateApparentMagnitude()
                 }
             }
@@ -69,6 +74,7 @@ class StarsActivity : Activity() {
     }
 
     override fun update(dt: Int) {
+        val time = System.currentTimeMillis()
         val ori = ctx.orientation.orientation
         cam.rotation = ori.applyTo(offset)
         cam.update()
@@ -113,7 +119,10 @@ class StarsActivity : Activity() {
             }
         }
 
-        g.drawString(appMag.toString(), 0, ctx.hardware.display.displayHeight)
+        if (time < stopDisplayMagnitudeAfter) {
+            val s = appMag.toString()
+            g.drawString("AppMag: " + s.dropLast(1) + "." + s.last(), 0, ctx.hardware.display.displayHeight)
+        }
 
     }
 
