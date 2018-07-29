@@ -20,10 +20,6 @@ interface Gyroscope {
         if (norm < GYROSCOPE_ZERO_NORM_THRESHOLD) {
             return Rotation.IDENTITY
         }
-        val vec = Vector3D(
-                (av.x * dt) / 1000,
-                (av.y * dt) / 1000,
-                (av.z * dt) / 1000)
-        return Rotation(vec, norm)
+        return Rotation(av, norm)
     }
 }

@@ -1,7 +1,7 @@
 package io.github.plenglin.goggle.activities
 
+import io.github.plenglin.goggle.util.ScrollList
 import io.github.plenglin.goggle.util.activity.Activity
-import io.github.plenglin.goggle.util.app.GoggleApp
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
 import org.slf4j.LoggerFactory
@@ -12,59 +12,37 @@ class AppListingActivity : Activity() {
     private val log = LoggerFactory.getLogger(javaClass.name)
 
     private lateinit var g: Graphics2D
-    private lateinit var apps: List<Pair<String, GoggleApp>>
-    private var iTop = 0
-    private var iSel = 0
-
-    private var redraw = true
+    private lateinit var scroll: ScrollList
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
-        apps = ctx.appRegistry.listApps().map { (_, app) -> app.appLabel to app }.sortedBy { it.first }
+        val appReg = ctx.appRegistry.listApps().sortedBy { it.second.appLabel }
+        val appNames = appReg.map { it.second.appLabel }
+        val apps = appReg.map { it.second }
+        scroll = ScrollList(ctx.hardware.display.displayBounds, appNames, ctx.resources.fontPrimary)
+
         ctx.input.listener = {
             when (it) {
                 ButtonInputEvent("s", true) -> {
-                    val a = apps[iSel].second
-                    log.debug("User selected app at index {} corresponding to {}", iSel, a)
+                    val a = apps[scroll.selection]
+                    log.debug("User selected app at index {} corresponding to {}", scroll.selection, a)
                     ctx.activity.swapActivity(a.createInitialActivity())
                 }
                 ButtonInputEvent("h", true) -> {
                     ctx.activity.popActivity()
                 }
                 EncoderInputEvent("sel", 1) -> {
-                    iSel = (iSel + apps.size + 1) % apps.size
-                    redraw = true
+                    scroll.increment()
                 }
                 EncoderInputEvent("sel", -1) -> {
-                    iSel = (iSel + apps.size - 1) % apps.size
-                    redraw = true
+                    scroll.decrement()
                 }
             }
         }
     }
 
     override fun update(dt: Int) {
-        g.font = ctx.resources.fontPrimary
-        val metrics = g.fontMetrics
-        val rows = 64 / metrics.height
-        if (iSel - iTop >= rows) {
-            iTop = iSel - rows + 1
-            log.debug("Putting iTop at {}", iTop)
-        } else if (iTop > iSel) {
-            iTop = iSel
-        }
-
-        if (!redraw) {
-            return
-        }
-        log.debug("redrawing")
-        g.clearRect(0, 0, 128, 64)
-
-        for (i in 0 until minOf(apps.size, rows)) {
-            g.drawString(apps[iTop + i].first, 10, i * metrics.height + metrics.height)
-        }
-        g.drawString(">", 2, (iSel - iTop) * metrics.height + metrics.height)
-        redraw = false
+        scroll.draw(g)
     }
 
     override fun stop() {

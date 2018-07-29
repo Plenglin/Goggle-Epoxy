@@ -4,7 +4,7 @@ import io.github.plenglin.goggle.util.scheduler.Command
 
 class RunCommand(val run: () -> Unit) : Command() {
 
-    constructor(run: Runnable): this(run::run)
+    constructor(run: Runnable) : this(run::run)
 
     override fun initialize() {
         run()

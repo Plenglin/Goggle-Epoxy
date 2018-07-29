@@ -6,7 +6,7 @@ import io.github.plenglin.goggle.util.scheduler.Command
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import kotlin.experimental.and
 
-class MagnetometerLSM303DLHC(val dev: I2CDevice, val scale: MagnetometerLSM303DLHCScale): Magnetometer, Command() {
+class MagnetometerLSM303DLHC(val dev: I2CDevice, val scale: MagnetometerLSM303DLHCScale) : Magnetometer, Command() {
     override var magneticField: Vector3D = Vector3D.ZERO
         private set
 

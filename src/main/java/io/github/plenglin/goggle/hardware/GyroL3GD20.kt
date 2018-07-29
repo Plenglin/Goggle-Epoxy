@@ -19,9 +19,9 @@ class GyroL3GD20(val dev: I2CDevice, scale: GyroL3GD20Scale) : Gyroscope, Comman
 
     override fun update(dt: Int) {
         angularVelocity = Vector3D(
-            ((dev.read(0x28) shl 8) or dev.read(0x29)) * multiplier,
-            ((dev.read(0x2a) shl 8) or dev.read(0x2b)) * multiplier,
-            ((dev.read(0x2c) shl 8) or dev.read(0x2d)) * multiplier
+                ((dev.read(0x28) shl 8) or dev.read(0x29)) * multiplier,
+                ((dev.read(0x2a) shl 8) or dev.read(0x2b)) * multiplier,
+                ((dev.read(0x2c) shl 8) or dev.read(0x2d)) * multiplier
         )
     }
 }
