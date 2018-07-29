@@ -37,9 +37,9 @@ class Context(val resources: Resources,
         appRegistry.registerApp("io.github.plenglin.goggleapp.astronomy.AstronomyApp")
         appRegistry.registerApp("io.github.plenglin.goggleapp.tetris.TetrisApp")
 
-        for (i in 0..10) {
+        /*for (i in 0..10) {
             appRegistry.registerApp(PlaceholderApp("ph-$i", "Placeholder $i"))
-        }
+        }*/
 
         hardware.commands.forEach(scheduler::addCommand)
         hardware.buttons.forEach {
