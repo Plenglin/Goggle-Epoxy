@@ -106,7 +106,7 @@ class StarsActivity : Activity() {
         cam.rotation = ori
         cam.update()
 
-        g.font = ctx.resources.fontPrimary
+        g.font = ctx.resources.fontSmall
         val metrics = g.fontMetrics
 
         AstronomyResources.SYMBOLS.forEach { (s, p) ->

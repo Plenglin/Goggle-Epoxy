@@ -30,7 +30,6 @@ class HomeSensorsActivity : Activity() {
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
-        //g.fontPrimary = Font.createFont(Font.)
     }
 
     override fun resume() {
@@ -60,7 +59,7 @@ class HomeSensorsActivity : Activity() {
             }
         }
 
-        g.font = ctx.resources.fontPrimary
+        g.font = ctx.resources.fontSmall
         val metrics = g.fontMetrics
 
         SYMBOLS.forEach { (s, p) ->

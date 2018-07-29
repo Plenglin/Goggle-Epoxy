@@ -21,7 +21,7 @@ class AppListingActivity : Activity() {
         val appReg = ctx.appRegistry.listApps().sortedBy { it.second.appLabel }
         val appNames = appReg.map { it.second.appLabel }
         apps = appReg.map { it.second }
-        scroll = ScrollList(ctx.hardware.display.displayBounds, appNames, ctx.resources.fontPrimary)
+        scroll = ScrollList(ctx.hardware.display.displayBounds, appNames, ctx.resources.fontSmall)
     }
 
     override fun resume() {

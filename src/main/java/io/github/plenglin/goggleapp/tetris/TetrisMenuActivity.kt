@@ -17,7 +17,7 @@ class TetrisMenuActivity : Activity() {
         list = ScrollList(
                 Rectangle(50, 40, 10, 30),
                 listOf("Start", "Quit"),
-                ctx.resources.fontPrimary
+                ctx.resources.fontSmall
         )
     }
 
@@ -38,7 +38,7 @@ class TetrisMenuActivity : Activity() {
             }
         }
         g.clearRect(0, 0, ctx.hardware.display.displayWidth, ctx.hardware.display.displayHeight)
-        g.font = ctx.resources.fontLarge
+        g.font = ctx.resources.fontHuge
         g.drawString("TETRIS", 20, 30)
     }
 

@@ -30,6 +30,9 @@ class Context(val resources: Resources,
     val input: InputManager = InputManager()
     val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc, oriCompensation)
     val appRegistry: GoggleAppRegistry = GoggleAppRegistry()
+    val display = hardware.display
+
+    //val db =
 
     fun run() {
         log.info("Beginning Context {}", this)
