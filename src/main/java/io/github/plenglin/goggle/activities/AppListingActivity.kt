@@ -2,6 +2,7 @@ package io.github.plenglin.goggle.activities
 
 import io.github.plenglin.goggle.util.ScrollList
 import io.github.plenglin.goggle.util.activity.Activity
+import io.github.plenglin.goggle.util.app.GoggleApp
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
 import org.slf4j.LoggerFactory
@@ -13,14 +14,17 @@ class AppListingActivity : Activity() {
 
     private lateinit var g: Graphics2D
     private lateinit var scroll: ScrollList
+    lateinit var apps: List<GoggleApp>
 
     override fun start() {
         g = ctx.hardware.display.createGraphics()
         val appReg = ctx.appRegistry.listApps().sortedBy { it.second.appLabel }
         val appNames = appReg.map { it.second.appLabel }
-        val apps = appReg.map { it.second }
+        apps = appReg.map { it.second }
         scroll = ScrollList(ctx.hardware.display.displayBounds, appNames, ctx.resources.fontPrimary)
+    }
 
+    override fun resume() {
         ctx.input.listener = {
             when (it) {
                 ButtonInputEvent("s", true) -> {

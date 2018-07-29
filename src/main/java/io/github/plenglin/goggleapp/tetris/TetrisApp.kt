@@ -7,8 +7,6 @@ class TetrisApp : GoggleApp {
     override val appName: String = "tetris"
     override val appLabel: String = "Tetris"
 
-    override fun createInitialActivity(): Activity {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun createInitialActivity(): Activity = TetrisMenuActivity()
 
 }

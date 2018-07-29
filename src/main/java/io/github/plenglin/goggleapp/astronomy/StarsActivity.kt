@@ -121,7 +121,7 @@ class StarsActivity : Activity() {
 
         if (time < stopDisplayMagnitudeAfter) {
             val s = appMag.toString()
-            g.drawString("AppMag: " + s.dropLast(1) + "." + s.last(), 0, ctx.hardware.display.displayHeight)
+            g.drawString("AppMag: " + s.dropLast(1) + "." + s.last(), 0, ctx.hardware.display.displayHeight - metrics.ascent)
         }
 
     }
