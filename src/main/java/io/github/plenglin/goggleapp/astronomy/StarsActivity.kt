@@ -73,6 +73,8 @@ class StarsActivity : Activity() {
         log.debug("We have {} stars: ", AstronomyResources.stars.size, AstronomyResources.stars)
     }
 
+    //private val alderamin = AstronomyResources.stars.find { it.name == "Alderamin" }!!
+
     override fun update(dt: Int) {
         val time = System.currentTimeMillis()
         val ori = ctx.orientation.orientation
@@ -102,6 +104,7 @@ class StarsActivity : Activity() {
                 g.drawString("CS", it[0].roundToInt(), it[1].roundToInt())
             }
         }
+        //println(cam.project(alderamin.cSpherePosition).contentToString())
 
         cam.rotation = ori
         cam.update()
@@ -129,14 +132,17 @@ class StarsActivity : Activity() {
     private fun getOffset(): Rotation {
         val now = LocalDateTime.now(Clock.systemUTC())
         val equinox = LocalDateTime.of(now.year, 3, 20, 0, 0, 0)
+
         val equinoxDifference = now.toEpochSecond(ZoneOffset.UTC) - equinox.toEpochSecond(ZoneOffset.UTC)
         val angleToEquinox = 2 * Math.PI * equinoxDifference / AstronomyResources.SECONDS_PER_YEAR
 
         val timeOfDay = now.hour * 3600 + now.minute * 60 + now.second
         val angleToMidnight = 2 * Math.PI * timeOfDay / AstronomyResources.SECONDS_PER_DAY
 
-        val ra = longitude + angleToEquinox + angleToMidnight - 180
+        val ra = longitude + angleToEquinox + angleToMidnight - Math.PI
         val dec = latitude
+
+        log.debug("a2e: {}; a2m: {}; RA: {}; Dec: {}", angleToEquinox, angleToMidnight, ra, dec)
 
         return STD_AXES_TO_ORI.applyTo(Rotation(RotationOrder.XYZ, 0.0, Math.PI / 2 - dec, ra))
     }
