@@ -130,21 +130,29 @@ class StarsActivity : Activity() {
     }
 
     private fun getOffset(): Rotation {
+        // Calculate angle to equinox by getting time passed since equinox
         val now = LocalDateTime.now(Clock.systemUTC())
         val equinox = LocalDateTime.of(now.year, 3, 20, 0, 0, 0)
 
         val equinoxDifference = now.toEpochSecond(ZoneOffset.UTC) - equinox.toEpochSecond(ZoneOffset.UTC)
         val angleToEquinox = 2 * Math.PI * equinoxDifference / AstronomyResources.SECONDS_PER_YEAR
 
+        // Correct a2e projected onto plane normal to earth's axis, since it is distorted by earth's axial tilt
+        val adjAngleToEquinox = Math.atan2(
+                AstronomyResources.EARTH_PROJECTION_DISTORTION * Math.sin(angleToEquinox),
+                -Math.cos(angleToEquinox)
+        )
+
+        // Calculate angle to midnight by getting time passed since midnight (UTC, of course)
         val timeOfDay = now.hour * 3600 + now.minute * 60 + now.second
         val angleToMidnight = 2 * Math.PI * timeOfDay / AstronomyResources.SECONDS_PER_DAY
 
-        val ra = longitude + angleToEquinox + angleToMidnight - Math.PI
+        val ra = longitude + adjAngleToEquinox + angleToMidnight - Math.PI
         val dec = latitude
 
-        log.debug("a2e: {}; a2m: {}; RA: {}; Dec: {}", angleToEquinox, angleToMidnight, ra, dec)
+        log.debug("a2e: {}; aa2e: {}; a2m: {}; RA: {}; Dec: {}", angleToEquinox, adjAngleToEquinox, angleToMidnight, ra, dec)
 
-        return STD_AXES_TO_ORI.applyTo(Rotation(RotationOrder.XYZ, 0.0, Math.PI / 2 - dec, ra))
+        return STD_AXES_TO_ORI.applyTo(Rotation(RotationOrder.XYZ, 0.0, Math.PI / 2 - dec, Math.PI / 2 - ra))
     }
 
     override fun suspend() {

@@ -10,6 +10,9 @@ object AstronomyResources {
     const val RADIANS_PER_HOUR = Math.PI / 12
     const val SECONDS_PER_YEAR = 31556926
     const val SECONDS_PER_DAY = 86400
+    const val EARTH_AXIAL_TILT = 23.5
+
+    val EARTH_PROJECTION_DISTORTION = Math.cos(Math.toRadians(EARTH_AXIAL_TILT))
 
     /**
      * Stars, listed in order of apparent magnitude.
