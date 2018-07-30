@@ -8,14 +8,15 @@ import java.awt.image.BufferedImage
 
 class TetrisGameActivity : Activity() {
 
-    private val blocks = Array(WIDTH) { BooleanArray(HEIGHT) }
-    private var points = 0L
-    private lateinit var g: Graphics2D
-
     private var currentGlyph: TetrisGlyph? = null
     private var x = 0
     private var y = 0
-    private var drawBuffer = BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_BINARY)
+    private var px = 0
+    private var py = 0
+    private var buffer = BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_BINARY)
+
+    private var points = 0L
+    private lateinit var g: Graphics2D
 
     override fun start() {
         g = ctx.display.createGraphics()
@@ -27,11 +28,16 @@ class TetrisGameActivity : Activity() {
                 ButtonInputEvent("x", true) -> ctx.activity.pushActivity(PausedActivity())
             }
         }
+        g.clearRect(0, 0, ctx.display.displayWidth, ctx.display.displayHeight)
     }
 
     override fun update(dt: Int) {
-        g.clearRect(0, 0, ctx.display.displayWidth, ctx.display.displayHeight)
-        g.drawRect(10, 10, 30, 30)
+
+        g.drawImage(
+                buffer,
+                10, 2, WIDTH * SCALE, HEIGHT * SCALE,
+                0, 0, WIDTH, HEIGHT,
+                null)
     }
 
     override fun stop() {
@@ -87,7 +93,7 @@ class TetrisGameActivity : Activity() {
                 )
         )
         val ALL_GLYPHS by lazy {
-            BASE_GLYPHS.map { listOf(it, it.rotatedCCW, it.rotatedCW, it.rotated180) }.flatten()
+            BASE_GLYPHS.map { listOf(it, it.rotatedCCW, it.rotatedCW, it.rotated180) }.flatten().toSet()
         }
 
     }
