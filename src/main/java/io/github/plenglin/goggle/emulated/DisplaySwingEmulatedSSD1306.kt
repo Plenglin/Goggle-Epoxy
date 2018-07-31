@@ -3,10 +3,12 @@ package io.github.plenglin.goggle.emulated
 import io.github.plenglin.goggle.devices.display.Display
 import io.github.plenglin.goggle.util.scheduler.Command
 import java.awt.*
+import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
+import javax.swing.JFrame
 import javax.swing.JPanel
 
-class DisplaySwingEmulatedSSD1306 : JPanel(), Display {
+class DisplaySwingEmulatedSSD1306(val closeJFrame: JFrame? = null) : JPanel(), Display {
 
     override val displayWidth: Int = 128
     override val displayHeight: Int = 64
@@ -31,6 +33,12 @@ class DisplaySwingEmulatedSSD1306 : JPanel(), Display {
     val updateCommand = object : Command() {
         override fun update(dt: Int) {
             paintImmediately(Rectangle(0, 0, 128, 64))
+        }
+
+        override fun terminate() {
+            if (closeJFrame != null) {
+                dispatchEvent(WindowEvent(closeJFrame, WindowEvent.WINDOW_CLOSING))
+            }
         }
     }
 

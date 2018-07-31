@@ -39,4 +39,12 @@ class Scheduler {
         commands.removeAll { !it.isRunning }
     }
 
+    fun terminateAll() {
+        commands.forEach {
+            it.terminate()
+            it.isRunning = false
+        }
+        commands.clear()
+    }
+
 }

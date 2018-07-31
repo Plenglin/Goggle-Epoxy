@@ -10,12 +10,14 @@ import io.github.plenglin.goggle.util.app.GoggleAppRegistry
 import io.github.plenglin.goggle.util.input.InputManager
 import io.github.plenglin.goggle.util.scheduler.Scheduler
 import org.slf4j.LoggerFactory
+import java.sql.DriverManager
+import kotlin.concurrent.thread
 
 class Context(val resources: Resources,
               val hardware: Hardware,
               val initialActivity: Activity = BlankActivity(),
               oriCompensation: Double = 0.02,
-              val sleepDelay: Long = 0) {
+              val sleepDelay: Long = 0) : AutoCloseable {
 
     val log = LoggerFactory.getLogger(javaClass)
 
@@ -33,10 +35,12 @@ class Context(val resources: Resources,
     val appRegistry: GoggleAppRegistry = GoggleAppRegistry()
     val display = hardware.display
 
-    //val db =
+    val db = DriverManager.getConnection("jdbc:sqlite:epoxy-config.db")
+
+    private var isShutdown = false
 
     fun run() {
-        log.info("Beginning Context {}", this)
+        log.info("Starting Context {}", this)
 
         appRegistry.registerApp("io.github.plenglin.goggleapp.astronomy.AstronomyApp")
         appRegistry.registerApp("io.github.plenglin.goggleapp.tetris.TetrisApp")
@@ -58,11 +62,32 @@ class Context(val resources: Resources,
 
         activity.pushActivity(initialActivity)
 
-        while (true) {
-            scheduler.update()
-            if (sleepDelay > 0) {
-                Thread.sleep(sleepDelay)
+        Runtime.getRuntime().addShutdownHook(Thread {
+            log.info("Reached shutdown hook. Shutting down.")
+            close()
+        })
+
+        try {
+            while (!isShutdown) {
+                scheduler.update()
+                if (sleepDelay > 0) {
+                    Thread.sleep(sleepDelay)
+                }
             }
+        } finally {
+            log.info("Reached finally block. Shutting down.")
+            close()
+        }
+    }
+
+    override fun close() {
+        if (!isShutdown) {
+            log.info("Closing {}", this)
+            scheduler.terminateAll()
+            db.close()
+            log.info("Safely closed {}", this)
+        } else {
+            log.warn("Already closed {}", this)
         }
     }
 
