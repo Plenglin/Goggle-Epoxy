@@ -8,7 +8,7 @@ import java.awt.event.KeyListener
 class EncoderKeyboard(override val name: String, val inc: Int, val dec: Int) : Encoder, KeyListener {
     override var ticks: Long = 0
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun keyTyped(e: KeyEvent?) {
     }

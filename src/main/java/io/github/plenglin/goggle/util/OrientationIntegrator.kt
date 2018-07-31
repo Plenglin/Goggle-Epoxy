@@ -21,7 +21,7 @@ class OrientationIntegrator(private val gyro: Gyroscope,
                             private val acc: Accelerometer,
                             private val compensation: Double = 0.02) : Command() {
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
     private val invCompensation = 1 - compensation
 
     var orientation: Rotation = Rotation.IDENTITY

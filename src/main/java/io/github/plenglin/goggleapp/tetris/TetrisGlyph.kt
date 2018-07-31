@@ -56,7 +56,7 @@ data class TetrisGlyph(val data: Array<BooleanArray>) : Iterable<IntPair> {
         val out = Array(width) { BooleanArray(height) }
         for (i in 0 until width) {
             for (j in 0 until height) {
-                out[height - j - 1][width - i - 1] = data[i][j]
+                out[width - i - 1][height - j - 1] = data[i][j]
             }
         }
         return TetrisGlyph(out)
@@ -75,6 +75,10 @@ data class TetrisGlyph(val data: Array<BooleanArray>) : Iterable<IntPair> {
 
     override fun hashCode(): Int {
         return Arrays.hashCode(data)
+    }
+
+    override fun toString(): String {
+        return "TetrisGlyph(${data.contentDeepToString()})"
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.*
 
 class ActivityManager(val ctx: Context) : Command() {
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     private val stack: Stack<Activity> = Stack()
     private var currentActivity: Activity? = null

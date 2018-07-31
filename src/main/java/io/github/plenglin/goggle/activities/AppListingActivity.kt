@@ -10,7 +10,7 @@ import java.awt.Graphics2D
 
 class AppListingActivity : Activity() {
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     private lateinit var g: Graphics2D
     private lateinit var scroll: ScrollList

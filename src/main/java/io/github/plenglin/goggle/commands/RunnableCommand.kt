@@ -2,7 +2,7 @@ package io.github.plenglin.goggle.commands
 
 import io.github.plenglin.goggle.util.scheduler.Command
 
-class RunCommand(val run: () -> Unit) : Command() {
+class RunnableCommand(val run: () -> Unit) : Command() {
 
     constructor(run: Runnable) : this(run::run)
 

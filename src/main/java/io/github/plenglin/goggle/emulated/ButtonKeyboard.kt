@@ -9,7 +9,7 @@ class ButtonKeyboard(override val name: String, val key: Int) : Button, KeyListe
     override var isPressed: Boolean = false
         private set
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun keyTyped(e: KeyEvent) {
     }

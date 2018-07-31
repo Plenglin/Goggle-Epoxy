@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 
 class Scheduler {
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     private val commands: MutableList<Command> = mutableListOf()
     private val commandBuffer: MutableList<Command> = mutableListOf()
@@ -22,7 +22,7 @@ class Scheduler {
         commands.forEach { c ->
             log.trace("Processing {}", c)
             if (!c.isRunning) {
-                log.info("Initializing {}", c)
+                log.debug("Initializing {}", c)
                 c.initialize()
                 c.isRunning = true
             }
@@ -31,7 +31,7 @@ class Scheduler {
             c.update((currentTime - c.lastExecuted).toInt())
             c.lastExecuted = currentTime
             if (c.shouldTerminate()) {
-                log.info("Terminating {}", c)
+                log.debug("Terminating {}", c)
                 c.terminate()
                 c.isRunning = false
             }

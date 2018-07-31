@@ -2,7 +2,7 @@ package io.github.plenglin.goggleapp.astronomy
 
 import io.github.plenglin.goggle.STD_AXES_TO_ORI
 import io.github.plenglin.goggle.commands.PeriodicCommand
-import io.github.plenglin.goggle.commands.RunCommand
+import io.github.plenglin.goggle.commands.RunnableCommand
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
@@ -22,7 +22,7 @@ class StarsActivity : Activity() {
     var latitude: Double = Math.toRadians(35.0)
     var longitude: Double = Math.toRadians(-122.0)
 
-    private val log = LoggerFactory.getLogger(javaClass.name)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     private lateinit var g: Graphics2D
     private lateinit var offset: Rotation
@@ -53,7 +53,7 @@ class StarsActivity : Activity() {
         stopDisplayMagnitudeAfter = System.currentTimeMillis() + 1000L
         offsetUpdater = PeriodicCommand(
                 ctx.scheduler,
-                RunCommand {
+                RunnableCommand {
                     log.debug("Updating offset")
                     offset = getOffset()
                 }, 100000L, 100000L

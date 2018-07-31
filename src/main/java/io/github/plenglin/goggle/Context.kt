@@ -16,7 +16,7 @@ class Context(val resources: Resources,
               oriCompensation: Double = 0.02,
               val sleepDelay: Long = 0) {
 
-    val log = LoggerFactory.getLogger(javaClass.name)
+    val log = LoggerFactory.getLogger(javaClass)
 
     init {
         if (oriCompensation > 0.1) {
