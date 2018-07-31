@@ -14,7 +14,11 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
+import java.sql.Timestamp
 import java.util.*
+import java.text.SimpleDateFormat
+
+
 
 class TetrisGameActivity : Activity() {
 
@@ -117,8 +121,7 @@ class TetrisGameActivity : Activity() {
             log.info("glyph has hit something")
             val result = freezeGlyph()
             if (!result) {
-                log.info("Game lost! Switching to lost activity")
-                ctx.activity.swapActivity(TetrisGameLostActivity())
+                onGameLost()
             }
             processCompleteRows()
             updatePointCounter()
@@ -147,6 +150,20 @@ class TetrisGameActivity : Activity() {
                 queueDrawRect.x, queueDrawRect.y, queueDrawRect.x2, queueDrawRect.y2,
                 0, 0, 4, 5 * QUEUE_SIZE,
                 null)
+    }
+
+    private fun onGameLost() {
+        log.info("Game lost! Switching to lost activity")
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val timestamp = Timestamp(System.currentTimeMillis())
+        val ts = sdf.format(timestamp)
+
+        val statement = ctx.db.prepareStatement("INSERT INTO tetris_scores (score, received) VALUES (?, ?)")
+        statement.setInt(1, points)
+        statement.setString(2, ts)
+        statement.executeUpdate()
+
+        ctx.activity.swapActivity(TetrisGameLostActivity())
     }
 
     private fun updatePointCounter() {

@@ -32,10 +32,10 @@ class Context(val resources: Resources,
     val activity: ActivityManager = ActivityManager(this)
     val input: InputManager = InputManager()
     val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc, oriCompensation)
-    val appRegistry: GoggleAppRegistry = GoggleAppRegistry()
+    val appRegistry: GoggleAppRegistry = GoggleAppRegistry(this)
     val display = hardware.display
 
-    val db = DriverManager.getConnection("jdbc:sqlite:epoxy-config.db")
+    val db = DriverManager.getConnection("jdbc:sqlite:epoxy-config.sqlite3")
 
     private var isShutdown = false
 
