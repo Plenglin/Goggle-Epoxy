@@ -21,7 +21,7 @@ class ScrollList(bounds: Rectangle,
     private var redraw = true
     private val metrics = Canvas().getFontMetrics(font)
     private val rows get() = bounds.height / metrics.height
-    private val barStart get() = bounds.height * iTop / things.size
+    private val barStart get() = bounds.y + bounds.height * iTop / things.size
     private val barHeight get() = bounds.height * rows / things.size
 
     val selection get() = iSel

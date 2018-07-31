@@ -5,6 +5,7 @@ import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
 import java.awt.Graphics2D
+import java.awt.Rectangle
 
 class TetrisHighScoreActivity : Activity() {
 
@@ -19,10 +20,10 @@ class TetrisHighScoreActivity : Activity() {
         val query = ctx.db.createStatement().executeQuery("SELECT score, received FROM tetris_scores ORDER BY score DESC LIMIT 16")
         val things = mutableListOf<String>()
         while (query.next()) {
-            things.add("${query.getInt(1)} (${query.getString(2)})")
+            things.add("${query.getInt(1)} at ${query.getString(2)}")
         }
 
-        list = ScrollList(ctx.display.displayBounds, things, ctx.resources.fontSmall)
+        list = ScrollList(Rectangle(0, 8, ctx.display.displayWidth, ctx.display.displayHeight - 8), things, ctx.resources.fontSmall)
 
         ctx.input.listener = {
             when (it) {
@@ -37,6 +38,9 @@ class TetrisHighScoreActivity : Activity() {
                 }
             }
         }
+
+        g.font = ctx.resources.fontSmall
+        g.drawString("High Scores", 0, 6)
     }
 
     override fun update(dt: Int) {
