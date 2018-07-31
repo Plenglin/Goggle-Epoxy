@@ -4,7 +4,7 @@ import io.github.plenglin.goggle.activities.BlankActivity
 import io.github.plenglin.goggle.commands.ButtonEventQueueFeeder
 import io.github.plenglin.goggle.commands.EncoderEventQueueFeeder
 import io.github.plenglin.goggle.util.OrientationIntegrator
-import io.github.plenglin.goggle.util.PlaceholderApp
+import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.activity.ActivityManager
 import io.github.plenglin.goggle.util.app.GoggleAppRegistry
 import io.github.plenglin.goggle.util.input.InputManager
@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 
 class Context(val resources: Resources,
               val hardware: Hardware,
+              val initialActivity: Activity = BlankActivity(),
               oriCompensation: Double = 0.02,
               val sleepDelay: Long = 0) {
 
@@ -55,7 +56,7 @@ class Context(val resources: Resources,
         scheduler.addCommand(input)
         scheduler.addCommand(activity)
 
-        activity.pushActivity(BlankActivity())
+        activity.pushActivity(initialActivity)
 
         while (true) {
             scheduler.update()

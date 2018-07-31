@@ -20,7 +20,9 @@ class TetrisGameActivity : Activity() {
 
     private var gx = 0
     private var gy = 0
-    private var buffer = BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_BINARY)
+    private var gameDrawBuffer = BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_BINARY)
+    private var queueDrawBuffer = BufferedImage(4, QUEUE_SIZE * 5, BufferedImage.TYPE_BYTE_BINARY)
+    private var singleGlyphDrawBuffer = BufferedImage(4, 4, BufferedImage.TYPE_BYTE_BINARY)
     private var existing = Array(WIDTH) { BooleanArray(HEIGHT) }
 
     private var canDelta = true
@@ -28,10 +30,15 @@ class TetrisGameActivity : Activity() {
     private lateinit var g: Graphics2D
     private lateinit var periodic: PeriodicCommand
 
+    private var drawX = 0
+    private var drawY = 0
+
     override fun start() {
         g = ctx.display.createGraphics()
-        (1..4).forEach { glyphQueue.offer(getRandomGlyph()) }
+        (1..QUEUE_SIZE).forEach { glyphQueue.offer(getRandomGlyph()) }
         nextGlyph()
+        drawX = (ctx.display.displayWidth - REAL_WIDTH) / 2
+        drawY = (ctx.display.displayHeight - REAL_HEIGHT) / 2
     }
 
     override fun resume() {
@@ -44,10 +51,13 @@ class TetrisGameActivity : Activity() {
                 ButtonInputEvent("x", true) -> {
                     currentGlyph = currentGlyph.rotatedCW
                 }
+                ButtonInputEvent("y", false) -> {
+                    dropGlyph()
+                }
                 is EncoderInputEvent -> {
                     if (canDelta) {
                         val prev = gx
-                        gx = (gx + it.delta).coerceIn(0, WIDTH - 1 - currentGlyph.width)
+                        gx = (gx + it.delta).coerceIn(0, WIDTH - currentGlyph.width)
                         if (currentGlyph.any { (x, y) -> existing[x + gx][y + gy]}) {
                             log.debug("We cannot move the glyph into this position due to intersection")
                             gx = prev
@@ -65,10 +75,6 @@ class TetrisGameActivity : Activity() {
         }, 250L, 0L)
 
         ctx.scheduler.addCommand(periodic)
-    }
-
-    override fun update(dt: Int) {
-
     }
 
     override fun suspend() {
@@ -92,16 +98,18 @@ class TetrisGameActivity : Activity() {
 
         for (i in 0 until WIDTH) {
             for (j in 0 until HEIGHT) {
-                buffer.setRGB(i, j, if (existing[i][j]) WHITE else BLACK)
+                gameDrawBuffer.setRGB(i, j, if (existing[i][j]) WHITE else BLACK)
             }
         }
         currentGlyph.forEach { (x, y) ->
-            buffer.setRGB(x + gx, y + gy, WHITE)
+            gameDrawBuffer.setRGB(x + gx, y + gy, WHITE)
         }
 
+        g.color = Color.white
+        g.fillRect(drawX - 1, drawY - 1, REAL_WIDTH + 2, REAL_HEIGHT + 2)
         g.drawImage(
-                buffer,
-                10, 2, 10 + WIDTH * SCALE, 2 + HEIGHT * SCALE,
+                gameDrawBuffer,
+                drawX, drawY, drawX + REAL_WIDTH, drawY + REAL_HEIGHT,
                 0, 0, WIDTH, HEIGHT,
                 null)
     }
@@ -112,7 +120,13 @@ class TetrisGameActivity : Activity() {
 
     private fun getCompleteRows(): List<Int> = (0 until HEIGHT).filter { y ->
         (0 until WIDTH).all { x ->
-            buffer.getRGB(x, y) != 0
+            gameDrawBuffer.getRGB(x, y) != 0
+        }
+    }
+
+    private fun dropGlyph() {
+        while (!hasGlyphHitGround()) {
+            gy++
         }
     }
 
@@ -136,6 +150,10 @@ class TetrisGameActivity : Activity() {
         const val HEIGHT = 20
         const val WIDTH = 10
         const val SCALE = 3
+        const val REAL_WIDTH = SCALE * WIDTH
+        const val REAL_HEIGHT = SCALE * HEIGHT
+        const val QUEUE_SIZE = 4
+
         val WHITE = Color.white.rgb
         val BLACK = Color.black.rgb
 
@@ -192,11 +210,4 @@ class TetrisGameActivity : Activity() {
 
     }
 
-}
-
-fun main(args: Array<String>) {
-    TetrisGameActivity.ALL_GLYPHS.forEach {
-        println(it)
-        println(it.toList())
-    }
 }

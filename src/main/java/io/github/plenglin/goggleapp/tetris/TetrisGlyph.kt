@@ -1,6 +1,7 @@
 package io.github.plenglin.goggleapp.tetris
 
 import io.github.plenglin.goggle.IntPair
+import java.awt.image.BufferedImage
 import java.util.*
 
 data class TetrisGlyph(val data: Array<BooleanArray>) : Iterable<IntPair> {
@@ -79,6 +80,12 @@ data class TetrisGlyph(val data: Array<BooleanArray>) : Iterable<IntPair> {
 
     override fun toString(): String {
         return "TetrisGlyph(${data.contentDeepToString()})"
+    }
+
+    fun drawToBuffer(buf: BufferedImage) {
+        forEach { (x, y) ->
+            buf.setRGB(x, y, TetrisGameActivity.WHITE)
+        }
     }
 
 }
