@@ -4,11 +4,15 @@ import io.github.plenglin.goggle.commands.PeriodicCommand
 import io.github.plenglin.goggle.commands.RunnableCommand
 import io.github.plenglin.goggle.util.PausedActivity
 import io.github.plenglin.goggle.util.activity.Activity
+import io.github.plenglin.goggle.util.fillRect
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
+import io.github.plenglin.goggle.util.x2
+import io.github.plenglin.goggle.util.y2
 import org.slf4j.LoggerFactory
 import java.awt.Color
 import java.awt.Graphics2D
+import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.util.*
 
@@ -22,7 +26,6 @@ class TetrisGameActivity : Activity() {
     private var gy = 0
     private var gameDrawBuffer = BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_BINARY)
     private var queueDrawBuffer = BufferedImage(4, QUEUE_SIZE * 5, BufferedImage.TYPE_BYTE_BINARY)
-    private var singleGlyphDrawBuffer = BufferedImage(4, 4, BufferedImage.TYPE_BYTE_BINARY)
     private var existing = Array(WIDTH) { BooleanArray(HEIGHT) }
 
     private var canDelta = true
@@ -32,13 +35,16 @@ class TetrisGameActivity : Activity() {
 
     private var drawX = 0
     private var drawY = 0
+    private lateinit var queueDrawRect: Rectangle
 
     override fun start() {
         g = ctx.display.createGraphics()
         (1..QUEUE_SIZE).forEach { glyphQueue.offer(getRandomGlyph()) }
-        nextGlyph()
         drawX = (ctx.display.displayWidth - REAL_WIDTH) / 2
         drawY = (ctx.display.displayHeight - REAL_HEIGHT) / 2
+        queueDrawRect = Rectangle(drawX + REAL_WIDTH + 10, drawY, 4 * SCALE, 5 * QUEUE_SIZE * SCALE)
+
+        nextGlyph()
     }
 
     override fun resume() {
@@ -88,6 +94,8 @@ class TetrisGameActivity : Activity() {
         }, 250L, 0L)
 
         ctx.scheduler.addCommand(periodic)
+        updatePointCounter()
+        updateQueueDrawBuffer()
     }
 
     private fun isGlyphIntersecting(): Boolean = currentGlyph.any { (x, y) -> existing[x + gx][y + gy]}
@@ -107,8 +115,13 @@ class TetrisGameActivity : Activity() {
         log.debug("redrawing")
         if (hasGlyphHitGround()) {
             log.info("glyph has hit something")
-            freezeGlyph()
+            val result = freezeGlyph()
+            if (!result) {
+                log.info("Game lost! Switching to lost activity")
+                ctx.activity.swapActivity(TetrisGameLostActivity())
+            }
             processCompleteRows()
+            updatePointCounter()
         }
 
         gy++
@@ -119,9 +132,8 @@ class TetrisGameActivity : Activity() {
                 gameDrawBuffer.setRGB(i, j, if (existing[i][j]) WHITE else BLACK)
             }
         }
-        currentGlyph.forEach { (x, y) ->
-            gameDrawBuffer.setRGB(x + gx, y + gy, WHITE)
-        }
+
+        currentGlyph.drawToBuffer(gameDrawBuffer, gx, gy)
 
         g.color = Color.white
         g.fillRect(drawX - 1, drawY - 1, REAL_WIDTH + 2, REAL_HEIGHT + 2)
@@ -130,6 +142,20 @@ class TetrisGameActivity : Activity() {
                 drawX, drawY, drawX + REAL_WIDTH, drawY + REAL_HEIGHT,
                 0, 0, WIDTH, HEIGHT,
                 null)
+        g.drawImage(
+                queueDrawBuffer,
+                queueDrawRect.x, queueDrawRect.y, queueDrawRect.x2, queueDrawRect.y2,
+                0, 0, 4, 5 * QUEUE_SIZE,
+                null)
+    }
+
+    private fun updatePointCounter() {
+        g.color = Color.black
+        g.fillRect(0, 0, drawX, ctx.display.displayHeight)
+        g.color = Color.white
+        g.font = ctx.resources.fontSmall
+        g.drawString("Points", 0, 27)
+        g.drawString(points.toString(), 0, 35)
     }
 
     private fun hasGlyphHitGround(): Boolean = currentGlyph.any { (x, y) ->
@@ -148,18 +174,22 @@ class TetrisGameActivity : Activity() {
         }
     }
 
-    private fun freezeGlyph() {
+    private fun freezeGlyph(): Boolean {
         log.debug("freezing glyph")
         currentGlyph.forEach { (x, y) ->
             existing[x + gx][y + gy] = true
         }
-        nextGlyph()
+        return nextGlyph()
     }
 
     private fun processCompleteRows() {
         val rows = getCompleteRows()
+        var pointsToAdd = 10
         for (r in rows) {
             log.info("row {} is full", r)
+            points += pointsToAdd
+            log.info("points + {} = {}", pointsToAdd, points)
+            pointsToAdd += 10
             for (y in (1..r).reversed()) {
                 val from = y - 1
                 log.debug("copying from {} to {}", from, y)
@@ -170,12 +200,31 @@ class TetrisGameActivity : Activity() {
         }
     }
 
-    private fun nextGlyph() {
+    private fun nextGlyph(): Boolean {
         log.debug("queueing the next glyph")
         currentGlyph = glyphQueue.poll()
         glyphQueue.offer(getRandomGlyph())
-        gx = WIDTH / 2
+        gx = (WIDTH - currentGlyph.width) / 2
         gy = 0
+        return if (isGlyphIntersecting()) {
+            false
+        } else {
+            updateQueueDrawBuffer()
+            true
+        }
+    }
+
+    private fun updateQueueDrawBuffer() {
+        for (x in 0 until queueDrawBuffer.width) {
+            for (y in 0 until queueDrawBuffer.height) {
+                queueDrawBuffer.setRGB(x, y, BLACK)
+            }
+        }
+        glyphQueue.forEachIndexed { i, g ->
+            g.drawToBuffer(queueDrawBuffer, 0, i * 5)
+        }
+        g.color = Color.black
+        g.fillRect(queueDrawRect)
     }
 
     companion object {

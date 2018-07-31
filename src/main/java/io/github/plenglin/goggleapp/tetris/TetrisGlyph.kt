@@ -82,9 +82,9 @@ data class TetrisGlyph(val data: Array<BooleanArray>) : Iterable<IntPair> {
         return "TetrisGlyph(${data.contentDeepToString()})"
     }
 
-    fun drawToBuffer(buf: BufferedImage) {
+    fun drawToBuffer(buf: BufferedImage, dx: Int = 0, dy: Int = 0) {
         forEach { (x, y) ->
-            buf.setRGB(x, y, TetrisGameActivity.WHITE)
+            buf.setRGB(x + dx, y + dy, TetrisGameActivity.WHITE)
         }
     }
 
