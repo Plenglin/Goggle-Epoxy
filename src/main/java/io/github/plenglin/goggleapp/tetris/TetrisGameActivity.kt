@@ -29,7 +29,7 @@ class TetrisGameActivity : Activity() {
     private var existing = Array(WIDTH) { BooleanArray(HEIGHT) }
 
     private var canDelta = true
-    private var points = 0L
+    private var points = 0
     private lateinit var g: Graphics2D
     private lateinit var periodic: PeriodicCommand
 

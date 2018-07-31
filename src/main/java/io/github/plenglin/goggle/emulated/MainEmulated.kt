@@ -119,7 +119,7 @@ fun main(args: Array<String>) {
 
     log.info("Running context")
     Context(Resources(), hw,
-            initialActivity = TetrisMenuActivity(),
+            //initialActivity = TetrisMenuActivity(),
             oriCompensation = 1.0,
             sleepDelay = 15L
     ).run()
