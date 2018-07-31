@@ -21,7 +21,7 @@ class TetrisGameActivity : Activity() {
     private var gx = 0
     private var gy = 0
     private var buffer = BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_BYTE_BINARY)
-    private var grid = Array(WIDTH) { BooleanArray(HEIGHT) }
+    private var existing = Array(WIDTH) { BooleanArray(HEIGHT) }
 
     private var canDelta = true
     private var points = 0L
@@ -46,17 +46,24 @@ class TetrisGameActivity : Activity() {
                 }
                 is EncoderInputEvent -> {
                     if (canDelta) {
+                        val prev = gx
                         gx = (gx + it.delta).coerceIn(0, WIDTH - 1 - currentGlyph.width)
-                        log.debug("gx = {}", gx)
+                        if (currentGlyph.any { (x, y) -> existing[x + gx][y + gy]}) {
+                            log.debug("We cannot move the glyph into this position due to intersection")
+                            gx = prev
+                        }
+                        log.debug("gx: {} -> {}", prev, gx)
                         canDelta = false
                     }
                 }
             }
         }
+
         g.clearRect(0, 0, ctx.display.displayWidth, ctx.display.displayHeight)
         periodic = PeriodicCommand(ctx.scheduler, RunnableCommand {
             redraw()
         }, 250L, 0L)
+
         ctx.scheduler.addCommand(periodic)
     }
 
@@ -75,7 +82,7 @@ class TetrisGameActivity : Activity() {
     private fun redraw() {
         canDelta = true
         log.debug("redrawing")
-        if (currentGlyph.any { (x, y) -> y + gy >= HEIGHT - 1 || grid[x][y + gy + 1] }) {
+        if (hasGlyphHitGround()) {
             log.info("glyph has hit something")
             freezeGlyph()
         }
@@ -85,7 +92,7 @@ class TetrisGameActivity : Activity() {
 
         for (i in 0 until WIDTH) {
             for (j in 0 until HEIGHT) {
-                buffer.setRGB(i, j, if (grid[i][j]) WHITE else BLACK)
+                buffer.setRGB(i, j, if (existing[i][j]) WHITE else BLACK)
             }
         }
         currentGlyph.forEach { (x, y) ->
@@ -99,6 +106,10 @@ class TetrisGameActivity : Activity() {
                 null)
     }
 
+    private fun hasGlyphHitGround(): Boolean = currentGlyph.any { (x, y) ->
+        y + gy == HEIGHT - 1 || existing[x + gx][y + gy + 1]
+    }
+
     private fun getCompleteRows(): List<Int> = (0 until HEIGHT).filter { y ->
         (0 until WIDTH).all { x ->
             buffer.getRGB(x, y) != 0
@@ -108,7 +119,7 @@ class TetrisGameActivity : Activity() {
     private fun freezeGlyph() {
         log.debug("freezing glyph")
         currentGlyph.forEach { (x, y) ->
-            grid[x + gx][y + gy] = true
+            existing[x + gx][y + gy] = true
         }
         nextGlyph()
     }
@@ -181,4 +192,11 @@ class TetrisGameActivity : Activity() {
 
     }
 
+}
+
+fun main(args: Array<String>) {
+    TetrisGameActivity.ALL_GLYPHS.forEach {
+        println(it)
+        println(it.toList())
+    }
 }
