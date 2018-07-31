@@ -2,6 +2,7 @@ package io.github.plenglin.goggle
 
 import com.pi4j.io.gpio.GpioController
 import com.pi4j.io.i2c.I2CBus
+import io.github.plenglin.goggle.devices.GPS
 import io.github.plenglin.goggle.devices.display.Display
 import io.github.plenglin.goggle.devices.input.Button
 import io.github.plenglin.goggle.devices.input.Encoder
@@ -23,6 +24,7 @@ data class Hardware(
         val bar: Barometer,
         val therm: Thermometer,
         val display: Display,
+        val gps: GPS? = null,
         val buttons: List<Button> = emptyList(),
         val encoders: List<Encoder> = emptyList(),
         val commands: List<Command> = emptyList()

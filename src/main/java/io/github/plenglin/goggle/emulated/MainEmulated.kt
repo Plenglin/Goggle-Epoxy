@@ -68,6 +68,8 @@ fun main(args: Array<String>) {
 
     val screen = DisplaySwingEmulatedSSD1306()
 
+    val gps = GPSEmulatedStationary(35.0, -122.0)
+
     val btnX = ButtonKeyboard("x", KeyEvent.VK_E)
     val btnY = ButtonKeyboard("y", KeyEvent.VK_D)
     val btnZ = ButtonKeyboard("z", KeyEvent.VK_G)
@@ -83,6 +85,7 @@ fun main(args: Array<String>) {
             acc = mpu, mag = mpu, gyro = mpu,
             alt = weather, bar = weather, therm = weather,
             display = screen, buttons = buttons, encoders = encoders,
+            gps = gps,
             commands = listOf(screen.updateCommand)
     )
 

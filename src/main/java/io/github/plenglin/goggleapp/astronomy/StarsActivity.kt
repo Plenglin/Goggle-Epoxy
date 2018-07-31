@@ -19,9 +19,6 @@ import java.time.ZoneOffset
 import kotlin.math.roundToInt
 
 class StarsActivity : Activity() {
-    var latitude: Double = Math.toRadians(35.0)
-    var longitude: Double = Math.toRadians(-122.0)
-
     private val log = LoggerFactory.getLogger(javaClass)
 
     private lateinit var g: Graphics2D
@@ -147,8 +144,8 @@ class StarsActivity : Activity() {
         val timeOfDay = now.hour * 3600 + now.minute * 60 + now.second
         val angleToMidnight = 2 * Math.PI * timeOfDay / AstronomyResources.SECONDS_PER_DAY
 
-        val ra = longitude + adjAngleToEquinox + angleToMidnight - Math.PI
-        val dec = latitude
+        val ra = ctx.hardware.gps!!.longitudeInRadians + adjAngleToEquinox + angleToMidnight - Math.PI
+        val dec = ctx.hardware.gps!!.latitudeInRadians
 
         log.debug("a2e: {}; aa2e: {}; a2m: {}; RA: {}; Dec: {}", angleToEquinox, adjAngleToEquinox, angleToMidnight, ra, dec)
 
