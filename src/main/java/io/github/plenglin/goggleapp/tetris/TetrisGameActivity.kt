@@ -95,7 +95,7 @@ class TetrisGameActivity : Activity() {
         g.clearRect(0, 0, ctx.display.displayWidth, ctx.display.displayHeight)
         periodic = PeriodicCommand(ctx.scheduler, RunnableCommand {
             redraw()
-        }, 250L, 0L)
+        }, 400L, 0L)
 
         ctx.scheduler.addCommand(periodic)
         updatePointCounter()
@@ -171,8 +171,8 @@ class TetrisGameActivity : Activity() {
         g.fillRect(0, 0, drawX, ctx.display.displayHeight)
         g.color = Color.white
         g.font = ctx.resources.fontSmall
-        g.drawString("Points", 0, 27)
-        g.drawString(points.toString(), 0, 35)
+        g.drawString("Points", 2, 8)
+        g.drawString(points.toString(), 2, 16)
     }
 
     private fun hasGlyphHitGround(): Boolean = currentGlyph.any { (x, y) ->

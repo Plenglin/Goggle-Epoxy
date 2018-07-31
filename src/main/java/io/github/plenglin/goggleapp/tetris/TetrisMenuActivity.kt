@@ -15,8 +15,8 @@ class TetrisMenuActivity : Activity() {
     override fun start() {
         g = ctx.hardware.display.createGraphics()
         list = ScrollList(
-                Rectangle(50, 40, 10, 30),
-                listOf("Start", "Quit"),
+                Rectangle(50, 32, 10, 30),
+                listOf("Start", "High Scores", "Quit"),
                 ctx.resources.fontSmall
         )
     }
@@ -31,6 +31,9 @@ class TetrisMenuActivity : Activity() {
                         ctx.activity.pushActivity(TetrisGameActivity())
                     }
                     1 -> {
+                        ctx.activity.pushActivity(TetrisHighScoreActivity())
+                    }
+                    2 -> {
                         ctx.activity.popActivity()
                     }
                 }
@@ -40,6 +43,7 @@ class TetrisMenuActivity : Activity() {
         g.clearRect(0, 0, ctx.hardware.display.displayWidth, ctx.hardware.display.displayHeight)
         g.font = ctx.resources.fontHuge
         g.drawString("TETRIS", 20, 30)
+        list.forceRedraw()
     }
 
     override fun update(dt: Int) {

@@ -1,6 +1,7 @@
 package io.github.plenglin.goggleapp.tetris
 
 import io.github.plenglin.goggle.util.activity.Activity
+import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import java.awt.BasicStroke
 import java.awt.Color
 import kotlin.math.roundToInt
@@ -22,6 +23,14 @@ class TetrisGameLostActivity : Activity() {
         g.stroke = BasicStroke(1f)
         g.drawRect(x - 3, fy, bounds.width.roundToInt() + 6, bounds.height.roundToInt())
         g.drawString(TEXT, x, ty)
+
+        ctx.input.listener = {
+            when (it) {
+                is ButtonInputEvent -> ctx.activity.swapActivity(TetrisHighScoreActivity())
+            }
+        }
+
+        g.dispose()
     }
 
     companion object {
