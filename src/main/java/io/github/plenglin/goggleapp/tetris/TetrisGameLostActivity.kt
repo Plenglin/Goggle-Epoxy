@@ -1,6 +1,7 @@
 package io.github.plenglin.goggleapp.tetris
 
 import io.github.plenglin.goggle.util.activity.Activity
+import java.awt.BasicStroke
 import java.awt.Color
 import kotlin.math.roundToInt
 
@@ -16,8 +17,10 @@ class TetrisGameLostActivity : Activity() {
         val fy = (ctx.display.displayHeight - bounds.height.roundToInt()) / 2
 
         g.color = Color.black
-        g.fillRect(x, fy, bounds.width.roundToInt(), bounds.height.roundToInt())
+        g.fillRect(x - 3, fy, bounds.width.roundToInt() + 6, bounds.height.roundToInt())
         g.color = Color.white
+        g.stroke = BasicStroke(1f)
+        g.drawRect(x - 3, fy, bounds.width.roundToInt() + 6, bounds.height.roundToInt())
         g.drawString(TEXT, x, ty)
     }
 
