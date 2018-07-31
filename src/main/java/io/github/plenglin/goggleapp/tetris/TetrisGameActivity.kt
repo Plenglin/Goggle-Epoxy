@@ -49,7 +49,20 @@ class TetrisGameActivity : Activity() {
                     ctx.activity.pushActivity(PausedActivity())
                 }
                 ButtonInputEvent("x", true) -> {
+                    log.info("rotating glyph CW")
                     currentGlyph = currentGlyph.rotatedCW
+                    while (isGlyphOutOfBoundsLeft()) {
+                        gx++
+                        log.debug("glyph is OOBL, gx = {}", gx)
+                    }
+                    while (isGlyphOutOfBoundsRight()) {
+                        gx--
+                        log.debug("glyph is OOBR, gx = {}", gx)
+                    }
+                    while (isGlyphIntersecting()) {
+                        log.debug("glyph is intersecting, moving to {}", gy)
+                        gy--
+                    }
                 }
                 ButtonInputEvent("y", false) -> {
                     dropGlyph()
@@ -58,7 +71,7 @@ class TetrisGameActivity : Activity() {
                     if (canDelta) {
                         val prev = gx
                         gx = (gx + it.delta).coerceIn(0, WIDTH - currentGlyph.width)
-                        if (currentGlyph.any { (x, y) -> existing[x + gx][y + gy]}) {
+                        if (isGlyphIntersecting()) {
                             log.debug("We cannot move the glyph into this position due to intersection")
                             gx = prev
                         }
@@ -77,6 +90,10 @@ class TetrisGameActivity : Activity() {
         ctx.scheduler.addCommand(periodic)
     }
 
+    private fun isGlyphIntersecting(): Boolean = currentGlyph.any { (x, y) -> existing[x + gx][y + gy]}
+    private fun isGlyphOutOfBoundsRight(): Boolean = currentGlyph.width + gx > WIDTH
+    private fun isGlyphOutOfBoundsLeft(): Boolean = currentGlyph.width + gx < 0
+
     override fun suspend() {
         periodic.stopExecution()
     }
@@ -91,6 +108,7 @@ class TetrisGameActivity : Activity() {
         if (hasGlyphHitGround()) {
             log.info("glyph has hit something")
             freezeGlyph()
+            processCompleteRows()
         }
 
         gy++
@@ -120,7 +138,7 @@ class TetrisGameActivity : Activity() {
 
     private fun getCompleteRows(): List<Int> = (0 until HEIGHT).filter { y ->
         (0 until WIDTH).all { x ->
-            gameDrawBuffer.getRGB(x, y) != 0
+            existing[x][y]
         }
     }
 
@@ -136,6 +154,20 @@ class TetrisGameActivity : Activity() {
             existing[x + gx][y + gy] = true
         }
         nextGlyph()
+    }
+
+    private fun processCompleteRows() {
+        val rows = getCompleteRows()
+        for (r in rows) {
+            log.info("row {} is full", r)
+            for (y in (1..r).reversed()) {
+                val from = y - 1
+                log.debug("copying from {} to {}", from, y)
+                for (x in 0 until WIDTH) {
+                    existing[x][y] = existing[x][from]
+                }
+            }
+        }
     }
 
     private fun nextGlyph() {
