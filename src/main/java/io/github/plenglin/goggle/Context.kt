@@ -1,5 +1,6 @@
 package io.github.plenglin.goggle
 
+import io.github.cdimascio.dotenv.dotenv
 import io.github.plenglin.goggle.activities.BlankActivity
 import io.github.plenglin.goggle.commands.ButtonEventQueueFeeder
 import io.github.plenglin.goggle.commands.EncoderEventQueueFeeder
@@ -10,6 +11,7 @@ import io.github.plenglin.goggle.util.app.GoggleAppRegistry
 import io.github.plenglin.goggle.util.input.InputManager
 import io.github.plenglin.goggle.util.scheduler.Scheduler
 import org.slf4j.LoggerFactory
+import java.io.File
 import java.sql.DriverManager
 import kotlin.concurrent.thread
 
@@ -34,6 +36,9 @@ class Context(val resources: Resources,
     val orientation: OrientationIntegrator = OrientationIntegrator(hardware.gyro, hardware.mag, hardware.acc, oriCompensation)
     val appRegistry: GoggleAppRegistry = GoggleAppRegistry(this)
     val display = hardware.display
+    val env = dotenv {
+        directory = "."
+    }
 
     val db = DriverManager.getConnection("jdbc:sqlite:epoxy-config.sqlite3")
 
@@ -44,10 +49,7 @@ class Context(val resources: Resources,
 
         appRegistry.registerApp("io.github.plenglin.goggleapp.astronomy.AstronomyApp")
         appRegistry.registerApp("io.github.plenglin.goggleapp.tetris.TetrisApp")
-
-        /*for (i in 0..10) {
-            appRegistry.registerApp(PlaceholderApp("ph-$i", "Placeholder $i"))
-        }*/
+        appRegistry.registerApp("io.github.plenglin.goggleapp.weather.WeatherForecastApp")
 
         hardware.commands.forEach(scheduler::addCommand)
         hardware.buttons.forEach {

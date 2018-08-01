@@ -252,3 +252,7 @@ gradle-app.setting
 # SQLite databases
 *.db
 *.sqlite3
+
+# Environment Configuration
+*.env
+.env
