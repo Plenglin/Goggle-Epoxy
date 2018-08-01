@@ -22,16 +22,14 @@ class TetrisHighScoreActivity : Activity() {
         while (query.next()) {
             things.add("${query.getInt(1)} at ${query.getString(2)}")
         }
+        g.clearRect(0, 0, ctx.display.displayWidth, ctx.display.displayHeight)
 
         list = ScrollList(Rectangle(0, 8, ctx.display.displayWidth, ctx.display.displayHeight - 8), things, ctx.resources.fontSmall)
 
         ctx.input.listener = {
             when (it) {
-                EncoderInputEvent("sel", 1) -> {
-                    list.increment()
-                }
-                EncoderInputEvent("sel", -1) -> {
-                    list.decrement()
+                is EncoderInputEvent -> {
+                    list.delta(it.delta)
                 }
                 ButtonInputEvent("h", true) -> {
                     ctx.activity.popActivity()

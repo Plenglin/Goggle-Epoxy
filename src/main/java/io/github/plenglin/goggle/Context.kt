@@ -11,9 +11,7 @@ import io.github.plenglin.goggle.util.app.GoggleAppRegistry
 import io.github.plenglin.goggle.util.input.InputManager
 import io.github.plenglin.goggle.util.scheduler.Scheduler
 import org.slf4j.LoggerFactory
-import java.io.File
 import java.sql.DriverManager
-import kotlin.concurrent.thread
 
 class Context(val resources: Resources,
               val hardware: Hardware,

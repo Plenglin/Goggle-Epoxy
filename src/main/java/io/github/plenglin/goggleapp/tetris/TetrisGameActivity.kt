@@ -15,9 +15,8 @@ import java.awt.Graphics2D
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.sql.Timestamp
-import java.util.*
 import java.text.SimpleDateFormat
-
+import java.util.*
 
 
 class TetrisGameActivity : Activity() {
@@ -61,20 +60,14 @@ class TetrisGameActivity : Activity() {
                 ButtonInputEvent("x", true) -> {
                     log.info("rotating glyph CW")
                     currentGlyph = currentGlyph.rotatedCW
-                    while (isGlyphOutOfBoundsLeft()) {
-                        gx++
-                        log.debug("glyph is OOBL, gx = {}", gx)
-                    }
-                    while (isGlyphOutOfBoundsRight()) {
-                        gx--
-                        log.debug("glyph is OOBR, gx = {}", gx)
-                    }
-                    while (isGlyphIntersecting()) {
-                        log.debug("glyph is intersecting, moving to {}", gy)
-                        gy--
-                    }
+                    afterRotateGlyph()
                 }
-                ButtonInputEvent("y", false) -> {
+                ButtonInputEvent("y", true) -> {
+                    log.info("rotating glyph CCW")
+                    currentGlyph = currentGlyph.rotatedCCW
+                    afterRotateGlyph()
+                }
+                ButtonInputEvent("z", false) -> {
                     dropGlyph()
                 }
                 is EncoderInputEvent -> {
@@ -182,6 +175,21 @@ class TetrisGameActivity : Activity() {
     private fun getCompleteRows(): List<Int> = (0 until HEIGHT).filter { y ->
         (0 until WIDTH).all { x ->
             existing[x][y]
+        }
+    }
+
+    private fun afterRotateGlyph() {
+        while (isGlyphOutOfBoundsLeft()) {
+            gx++
+            log.debug("glyph is OOBL, gx = {}", gx)
+        }
+        while (isGlyphOutOfBoundsRight()) {
+            gx--
+            log.debug("glyph is OOBR, gx = {}", gx)
+        }
+        while (isGlyphIntersecting()) {
+            log.debug("glyph is intersecting, moving to {}", gy)
+            gy--
         }
     }
 

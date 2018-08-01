@@ -24,8 +24,9 @@ class TetrisMenuActivity : Activity() {
     override fun resume() {
         ctx.input.listener = {
             when (it) {
-                EncoderInputEvent("sel", 1) -> list.increment()
-                EncoderInputEvent("sel", -1) -> list.decrement()
+                is EncoderInputEvent -> {
+                    list.delta(it.delta)
+                }
                 ButtonInputEvent("s", true) -> when (list.selection) {
                     0 -> {
                         ctx.activity.pushActivity(TetrisGameActivity())

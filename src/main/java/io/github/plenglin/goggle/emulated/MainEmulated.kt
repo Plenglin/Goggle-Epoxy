@@ -9,7 +9,6 @@ import io.github.plenglin.goggle.devices.motion.Magnetometer
 import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
-import io.github.plenglin.goggleapp.tetris.TetrisMenuActivity
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.log4j.BasicConfigurator
 import org.apache.log4j.Logger

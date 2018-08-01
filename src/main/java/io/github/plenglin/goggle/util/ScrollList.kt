@@ -1,7 +1,10 @@
 package io.github.plenglin.goggle.util
 
 import org.slf4j.LoggerFactory
-import java.awt.*
+import java.awt.Canvas
+import java.awt.Font
+import java.awt.Graphics
+import java.awt.Rectangle
 
 class ScrollList(bounds: Rectangle,
                  private val things: List<String>,
@@ -26,14 +29,8 @@ class ScrollList(bounds: Rectangle,
 
     val selection get() = iSel
 
-    fun increment() {
+    fun delta(d: Int) {
         iSel = (iSel + things.size + 1) % things.size
-        log.debug("Selected: {}", iSel)
-        redraw = true
-    }
-
-    fun decrement() {
-        iSel = (iSel + things.size - 1) % things.size
         log.debug("Selected: {}", iSel)
         redraw = true
     }

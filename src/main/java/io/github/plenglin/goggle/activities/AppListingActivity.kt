@@ -35,11 +35,8 @@ class AppListingActivity : Activity() {
                 ButtonInputEvent("h", true) -> {
                     ctx.activity.popActivity()
                 }
-                EncoderInputEvent("sel", 1) -> {
-                    scroll.increment()
-                }
-                EncoderInputEvent("sel", -1) -> {
-                    scroll.decrement()
+                is EncoderInputEvent -> {
+                    scroll.delta(it.delta)
                 }
             }
         }
