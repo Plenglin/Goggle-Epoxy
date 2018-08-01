@@ -4,7 +4,7 @@ data class OWMForecastData(val city: OWMCityInfo,
                            val cnt: Int,
                            val list: List<OWMDataPoint>) {
     init {
-        list.forEach { it.city = this.city.name }
+        list.forEach { it.name = this.city.name }
     }
 }
 
@@ -15,7 +15,7 @@ data class OWMDataPoint(val dt: Long,
                         val weather: List<OWMWeather>,
                         val wind: OWMWind,
                         val clouds: OWMClouds,
-                        var city: String,
+                        var name: String,
                         val rain: OWMPrecipitation,
                         val snow: OWMPrecipitation)
 

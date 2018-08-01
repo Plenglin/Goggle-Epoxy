@@ -16,28 +16,28 @@ object WeatherResources {
     fun getCurrentWeatherData(lat: Double, lon: Double, cb: (OWMDataPoint?) -> Unit) {
         Fuel.get(URL_WEATHER, parameters = listOf(
                 "appid" to apiKey,
-                "lon" to lat,
-                "lat" to lon,
+                "lon" to lon,
+                "lat" to lat,
                 "units" to "metric"
-        )).responseObject<OWMDataPoint> { request, _, (dat, err) ->
-            log.debug("sent {}, received {}", request, dat)
+        )).responseObject<OWMDataPoint> { _, _, (dat, err) ->
+            log.debug("received {}", dat)
             if (err != null) {
-                log.error("{}", err)
+                log.error("Error while fetching data!", err.exception)
             }
             cb(dat)
         }
     }
 
     fun getForecastData(lat: Double, lon: Double, cb: (OWMForecastData?) -> Unit) {
-        Fuel.get(URL_WEATHER, parameters = listOf(
+        Fuel.get(URL_FORECAST, parameters = listOf(
                 "appid" to apiKey,
-                "lon" to lat,
-                "lat" to lon,
+                "lon" to lon,
+                "lat" to lat,
                 "units" to "metric"
-        )).responseObject<OWMForecastData> { request, _, (dat, err) ->
-            log.debug("sent {}, received {}", request, dat)
+        )).responseObject<OWMForecastData> { _, _, (dat, err) ->
+            log.debug("received {}", dat)
             if (err != null) {
-                log.error("{}", err)
+                log.error("Error while fetching data!", err.exception)
             }
             cb(dat)
         }

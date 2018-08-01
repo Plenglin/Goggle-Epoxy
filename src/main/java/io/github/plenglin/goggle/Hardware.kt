@@ -12,9 +12,10 @@ import io.github.plenglin.goggle.devices.motion.Magnetometer
 import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
+import io.github.plenglin.goggle.emulated.GPSEmulatedStationary
 import io.github.plenglin.goggle.util.scheduler.Command
 
-data class Hardware(
+class Hardware(
         val gpio: GpioController? = null,
         val i2c: I2CBus? = null,
         val acc: Accelerometer,
@@ -24,8 +25,10 @@ data class Hardware(
         val bar: Barometer,
         val therm: Thermometer,
         val display: Display,
-        val gps: GPS? = null,
+        gps: GPS? = null,
         val buttons: List<Button> = emptyList(),
         val encoders: List<Encoder> = emptyList(),
         val commands: List<Command> = emptyList()
-)
+) {
+    val gps: GPS = gps ?: GPSEmulatedStationary(0.0, 0.0)
+}
