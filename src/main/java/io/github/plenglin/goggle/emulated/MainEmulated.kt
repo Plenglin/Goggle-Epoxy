@@ -67,7 +67,7 @@ fun main(args: Array<String>) {
 
     val screen = DisplaySwingEmulatedSSD1306()
 
-    val gps = GPSEmulatedStationary(37.0, -122.0670506)
+    val gps = GPSEmulatedStationary(36.9741, -122.0308)
 
     val btnX = ButtonKeyboard("x", KeyEvent.VK_E)
     val btnY = ButtonKeyboard("y", KeyEvent.VK_D)

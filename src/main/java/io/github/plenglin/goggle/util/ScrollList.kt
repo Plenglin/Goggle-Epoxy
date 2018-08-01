@@ -30,7 +30,7 @@ class ScrollList(bounds: Rectangle,
     val selection get() = iSel
 
     fun delta(d: Int) {
-        iSel = (iSel + things.size + 1) % things.size
+        iSel = (iSel + things.size + d) % things.size
         log.debug("Selected: {}", iSel)
         redraw = true
     }

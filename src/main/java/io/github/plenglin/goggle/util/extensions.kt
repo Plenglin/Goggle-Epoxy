@@ -8,3 +8,7 @@ val Rectangle.y2 get() = y + height
 
 fun Graphics2D.clearRect(r: Rectangle) = clearRect(r.x, r.y, r.width, r.height)
 fun Graphics2D.fillRect(r: Rectangle) = fillRect(r.x, r.y, r.width, r.height)
+
+fun Double.format(digits: Int): String {
+    return "%.${digits}f".format(this)
+}
