@@ -15,5 +15,5 @@ class WeatherForecastApp : GoggleApp {
         log.info("Read API key: {}", WeatherResources.apiKey)
     }
 
-    override fun createInitialActivity(): Activity = CurrentWeatherActivity()
+    override fun createInitialActivity(): Activity = WeatherSummaryActivity()
 }

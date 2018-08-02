@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage
 import java.time.format.TextStyle
 import java.util.*
 
-class CurrentWeatherActivity : Activity() {
+class WeatherSummaryActivity : Activity() {
 
     private lateinit var buf: BufferedImage
     private val forecastBuf = BufferedImage(256, 30, BufferedImage.TYPE_BYTE_BINARY)
@@ -72,6 +72,11 @@ class CurrentWeatherActivity : Activity() {
                 is EncoderInputEvent -> {
                     forecastXOffset = (forecastXOffset - it.delta * 10).coerceIn(ctx.display.displayWidth - forecastWidth, 0)
                     redraw()
+                }
+                ButtonInputEvent("x", true) -> {
+                    WeatherResources.getForecastData(lat, lon) {
+                        ctx.activity.pushActivity(TemperatureGraphActivity(it!!))
+                    }
                 }
                 ButtonInputEvent("h", true) -> {
                     ctx.activity.popActivity()
