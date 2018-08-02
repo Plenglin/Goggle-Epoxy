@@ -75,7 +75,7 @@ class TemperatureGraphActivity(val data: OWMForecastData) : Activity() {
         g.drawLine(12, yAxTop, 12, yAxBot)
         g.drawLine(ctx.display.displayWidth - 4, yAxBot, 12, yAxBot)
 
-        g.stroke = BasicStroke(1.3f)
+        g.stroke = BasicStroke(1.1f)
 
         var (x1, y1) = pts.first()
         for ((x2, y2) in pts.drop(1)) {

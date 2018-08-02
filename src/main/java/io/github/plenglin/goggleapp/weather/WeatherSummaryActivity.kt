@@ -1,7 +1,5 @@
 package io.github.plenglin.goggleapp.weather
 
-import io.github.plenglin.goggle.commands.RunnableCommand
-import io.github.plenglin.goggle.commands.WaitCommand
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.format
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
@@ -12,7 +10,7 @@ import java.awt.image.BufferedImage
 import java.time.format.TextStyle
 import java.util.*
 
-class WeatherSummaryActivity : Activity() {
+class WeatherSummaryActivity(val wctx: WeatherContext) : Activity() {
 
     private lateinit var buf: BufferedImage
     private val forecastBuf = BufferedImage(256, 30, BufferedImage.TYPE_BYTE_BINARY)
@@ -20,8 +18,6 @@ class WeatherSummaryActivity : Activity() {
 
     private val log = LoggerFactory.getLogger(javaClass)
 
-    private var currentDataReady = false
-    private var forecastDataReady = false
     private var forecastXOffset = 0
 
     private lateinit var g: Graphics2D
@@ -42,31 +38,6 @@ class WeatherSummaryActivity : Activity() {
                     (ctx.display.displayHeight + it.height) / 2)
         }
 
-        log.debug("Clearing ready flags")
-        currentDataReady = false
-        forecastDataReady = false
-
-        val lat = ctx.hardware.gps.latitude
-        val lon = ctx.hardware.gps.longitude
-
-        WeatherResources.getCurrentWeatherData(lat, lon) {
-            log.debug("Rendering weather data")
-            renderWeatherData(lat, lon, it!!)
-            currentDataReady = true
-        }
-
-        WeatherResources.getForecastData(lat, lon) {
-            renderForecastData(it!!)
-            forecastDataReady = true
-        }
-
-        ctx.scheduler.addCommand(WaitCommand(
-                ctx.scheduler,
-                RunnableCommand {
-                    redraw()
-                }) { currentDataReady && forecastDataReady }
-        )
-
         ctx.input.listener = {
             when (it) {
                 is EncoderInputEvent -> {
@@ -74,15 +45,19 @@ class WeatherSummaryActivity : Activity() {
                     redraw()
                 }
                 ButtonInputEvent("x", true) -> {
-                    WeatherResources.getForecastData(lat, lon) {
+                    WeatherResources.getForecastData(wctx.lat, wctx.lon) {
                         ctx.activity.pushActivity(TemperatureGraphActivity(it!!))
                     }
+                }
+                ButtonInputEvent("z", true) -> {
+                    ctx.activity.swapActivity(WeatherLoadingActivity())
                 }
                 ButtonInputEvent("h", true) -> {
                     ctx.activity.popActivity()
                 }
             }
         }
+        redraw()
     }
 
     override fun stop() {
@@ -90,11 +65,14 @@ class WeatherSummaryActivity : Activity() {
     }
 
     private fun redraw() {
+        renderForecastData()
+        renderWeatherData()
         g.drawImage(buf, 0, 0, null)
         g.drawImage(forecastBuf, forecastXOffset, 38, null)
     }
 
-    private fun renderWeatherData(lat: Double, lon: Double, dat: OWMCurrentData) {
+    private fun renderWeatherData() {
+        val (dat, _, lat, lon) = wctx
         val gb = buf.createGraphics()
         gb.font = ctx.resources.fontMedium
         gb.drawString(dat.name, 4, 12)
@@ -112,14 +90,15 @@ class WeatherSummaryActivity : Activity() {
         gb.dispose()
     }
 
-    private fun renderForecastData(dat: OWMForecastData) {
-        val gb2 = forecastBuf.createGraphics()
+    private fun renderForecastData() {
+        val dat = wctx.forecast
+        val gb = forecastBuf.createGraphics()
 
         val days = dat.days
         log.debug("Sorted days into {}", days)
-        var x = gb2.drawForDay(0, "Today", days[0]) + 5
+        var x = gb.drawForDay(0, "Today", days[0]) + 5
         days.drop(1).forEach { pt ->
-            x += gb2.drawForDay(x, pt.day.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()), pt) + 5
+            x += gb.drawForDay(x, pt.day.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()), pt) + 5
         }
         forecastWidth = x - 5
     }
