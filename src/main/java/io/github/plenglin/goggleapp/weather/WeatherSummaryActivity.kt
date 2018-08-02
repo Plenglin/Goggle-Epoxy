@@ -28,16 +28,6 @@ class WeatherSummaryActivity(val wctx: WeatherContext) : Activity() {
     }
 
     override fun resume() {
-        g.clearRect(0, 0, ctx.display.displayWidth, ctx.display.displayHeight)
-
-        g.font = ctx.resources.fontLarge
-        g.fontMetrics.let {
-            g.drawString(
-                    "Loading...",
-                    (ctx.display.displayWidth - it.stringWidth("Loading...")) / 2,
-                    (ctx.display.displayHeight + it.height) / 2)
-        }
-
         ctx.input.listener = {
             when (it) {
                 is EncoderInputEvent -> {
