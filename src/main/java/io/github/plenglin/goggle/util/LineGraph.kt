@@ -46,7 +46,7 @@ class LineGraph(private val xs: List<String>, private val ys: List<Double>, val 
             val y = ylerp(t)
             val yl = y + metrics.height / 2
             g.drawString(t.toString(), 0, yl)
-            g.drawRect(12, y, 2, 1)
+            g.drawRect(12, y, 2, 0)
             log.debug("{} at y = {}", t, y)
         }
 

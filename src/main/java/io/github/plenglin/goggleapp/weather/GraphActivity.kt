@@ -19,7 +19,7 @@ class GraphActivity(val data: OWMForecastData) : Activity() {
         private val log = LoggerFactory.getLogger(this::class.java)
 
         enum class GraphMode(val l: String, val f: (OWMForecastPoint) -> Double, val range: (DoublePair) -> IntProgression) {
-            TEMPERATURE("thrm", { it.main.temp }, { (min, max) ->
+            TEMPERATURE("temp", { it.main.temp }, { (min, max) ->
                 (min.roundToInt() / 10 * 10)..(max.roundToInt() / 10 * 10 + 5) step 10
             }),
             PRESSURE("pres",{ it.main.pressure }, { (min, max) ->
