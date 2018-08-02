@@ -36,7 +36,7 @@ class WeatherSummaryActivity(val wctx: WeatherContext) : Activity() {
                 }
                 ButtonInputEvent("x", true) -> {
                     WeatherResources.getForecastData(wctx.lat, wctx.lon) {
-                        ctx.activity.pushActivity(TemperatureGraphActivity(it!!))
+                        ctx.activity.pushActivity(GraphActivity(it!!))
                     }
                 }
                 ButtonInputEvent("z", true) -> {
@@ -47,6 +47,8 @@ class WeatherSummaryActivity(val wctx: WeatherContext) : Activity() {
                 }
             }
         }
+        renderForecastData()
+        renderWeatherData()
         redraw()
     }
 
@@ -55,8 +57,6 @@ class WeatherSummaryActivity(val wctx: WeatherContext) : Activity() {
     }
 
     private fun redraw() {
-        renderForecastData()
-        renderWeatherData()
         g.drawImage(buf, 0, 0, null)
         g.drawImage(forecastBuf, forecastXOffset, 38, null)
     }

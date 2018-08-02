@@ -23,11 +23,11 @@ fun Double.lerp(a1: Double, a2: Double, b1: Double, b2: Double): Double  {
 
 fun lerper(a1: Int, a2: Int, b1: Int, b2: Int): (Int) -> Int {
     val slope = (b2 - b1) / (a2 - a1)
-    return {slope * it + b1}
+    return {slope * (it - a1) + b1}
 }
 
 fun lerper(a1: Double, a2: Double, b1: Double, b2: Double): (Double) -> Double {
     val slope = (b2 - b1) / (a2 - a1)
-    return {slope * it + b1}
+    return {slope * (it - a1) + b1}
 }
 
