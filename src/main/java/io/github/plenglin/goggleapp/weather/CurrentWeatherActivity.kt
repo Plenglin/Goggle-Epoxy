@@ -116,7 +116,7 @@ class CurrentWeatherActivity : Activity() {
         days.drop(1).forEach { pt ->
             x += gb2.drawForDay(x, pt.day.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()), pt) + 5
         }
-        forecastWidth = x
+        forecastWidth = x - 5
     }
 
     private fun Graphics2D.drawForDay(x: Int, title: String, dat: DayWeatherData): Int {
