@@ -44,13 +44,13 @@ object WeatherResources {
         }
     }
 
-    fun getDailyForecastData(lat: Double, lon: Double, cb: (OWMForecastData?) -> Unit) {
+    fun getDailyForecastData(lat: Double, lon: Double, cb: (OWMDailyForecastData?) -> Unit) {
         Fuel.get(URL_FORECAST_DAILY, parameters = listOf(
                 "appid" to apiKey,
                 "lon" to lon,
                 "lat" to lat,
                 "units" to "metric"
-        )).responseObject<OWMForecastData> { _, _, (dat, err) ->
+        )).responseObject<OWMDailyForecastData> { _, _, (dat, err) ->
             log.debug("received {}", dat)
             if (err != null) {
                 log.error("Error while fetching data!", err.exception)
