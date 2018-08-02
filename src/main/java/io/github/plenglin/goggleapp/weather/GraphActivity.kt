@@ -1,5 +1,6 @@
 package io.github.plenglin.goggleapp.weather
 
+import io.github.plenglin.goggle.DoublePair
 import io.github.plenglin.goggle.util.LineGraph
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.clearRect
@@ -14,25 +15,41 @@ import kotlin.math.roundToInt
 
 class GraphActivity(val data: OWMForecastData) : Activity() {
 
-    private val log = LoggerFactory.getLogger(javaClass)
+    companion object {
+        private val log = LoggerFactory.getLogger(this::class.java)
+
+        enum class GraphMode(val l: String, val f: (OWMForecastPoint) -> Double, val range: (DoublePair) -> IntProgression) {
+            TEMPERATURE("thrm", { it.main.temp }, { (min, max) ->
+                (min.roundToInt() / 10 * 10)..(max.roundToInt() / 10 * 10 + 5) step 10
+            }),
+            PRESSURE("pres",{ it.main.pressure }, { (min, max) ->
+                (min.roundToInt())..(max.roundToInt()) step 1
+            }),
+            HUMIDITY("hum", { it.main.humidity }, { 0..100 step 20 })
+        }
+    }
+
+    private var iMode = 0
+    private val modes = GraphMode.values()
 
     private lateinit var graphBuf: BufferedImage
     private lateinit var g: Graphics2D
     private var iOffset = 0
 
-    private val yIndices: IntProgression
+    private lateinit var yIndices: IntProgression
 
-    init {
-        val ys = data.list.map { it.main.temp }
-        yIndices = (ys.min()!!.roundToInt() / 10 * 10)..(ys.max()!!.roundToInt() / 10 * 10) step 10
+    private fun updateYIndices(ys: List<Double>) {
+        val mode = modes[iMode]
+        yIndices = mode.range(ys.min()!! to ys.max()!!)
     }
 
     override fun start() {
         g = ctx.display.createGraphics()
-        graphBuf = BufferedImage(ctx.display.displayWidth - 16, ctx.display.displayHeight - 12, BufferedImage.TYPE_BYTE_BINARY)
+        graphBuf = BufferedImage(ctx.display.displayWidth - 16, ctx.display.displayHeight - 16, BufferedImage.TYPE_BYTE_BINARY)
     }
 
     override fun resume() {
+        updateYIndices(data.list.map(modes[iMode].f))
         ctx.input.listener = {
             when (it) {
                 is EncoderInputEvent -> {
@@ -42,6 +59,11 @@ class GraphActivity(val data: OWMForecastData) : Activity() {
                 ButtonInputEvent("h", true) -> {
                     ctx.activity.popActivity()
                 }
+                ButtonInputEvent("x", true) -> {
+                    iMode = (iMode + 1) % modes.size
+                    updateYIndices(data.list.map(modes[iMode].f))
+                    redraw()
+                }
             }
         }
         redraw()
@@ -49,8 +71,9 @@ class GraphActivity(val data: OWMForecastData) : Activity() {
 
     private fun redraw() {
         g.clearRect(ctx.display.displayBounds)
+        val mode = modes[iMode]
         val ds = data.list.drop(iOffset).take(8)
-        val ys = ds.map { it.main.temp }
+        val ys = ds.map(mode.f)
         val minDay = Calendar.getInstance().apply { time = Date(ds.map { it.dt }.min()!! * 1000) }
         val dateFmt = SimpleDateFormat("yyyy-MM-dd").format(minDay.time)
         val lineGraph = LineGraph(
@@ -64,8 +87,8 @@ class GraphActivity(val data: OWMForecastData) : Activity() {
         )
         lineGraph.drawTo(graphBuf, ctx.resources.fontSmall)
         g.font = ctx.resources.fontMedium
-        g.drawImage(graphBuf, 0, 12, null)
-        g.drawString("$dateFmt (temp)", 0, 14)
+        g.drawImage(graphBuf, 0, 16, null)
+        g.drawString("${mode.l}: $dateFmt", 0, 14)
     }
 
     override fun suspend() {

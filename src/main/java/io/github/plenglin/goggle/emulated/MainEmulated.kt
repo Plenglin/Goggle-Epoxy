@@ -89,6 +89,17 @@ fun main(args: Array<String>) {
     )
 
     SwingUtilities.invokeLater {
+        log.info("Creating slider panel")
+        JFrame("Sensor Sliders").apply {
+            add(dsp)
+            pack()
+            isVisible = true
+            location = Point(100, 500)
+            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+        }
+    }
+
+    SwingUtilities.invokeLater {
         log.info("Creating Emulated SSD1306")
         JFrame("Goggle Epoxy Test").apply {
             add(screen)
@@ -98,17 +109,6 @@ fun main(args: Array<String>) {
             isVisible = true
             isResizable = false
             location = Point(100, 100)
-            defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-        }
-    }
-
-    SwingUtilities.invokeLater {
-        log.info("Creating slider panel")
-        JFrame("Sensor Sliders").apply {
-            add(dsp)
-            pack()
-            isVisible = true
-            location = Point(100, 500)
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE
         }
     }

@@ -19,19 +19,21 @@ class LineGraph(private val xs: List<String>, private val ys: List<Double>, val 
         val metrics = g.fontMetrics
 
         val hSpacing = buf.width / xs.size
-        val yAxBot = buf.height - 8
+        val yAxTop = metrics.height / 2
+        val yAxBot = buf.height - 8 - yAxTop
 
-        val tempToYCoord = lerper(yIndices.first, yIndices.last, yAxBot, 0)
+        val ylerp = lerperAccurate(yIndices.first, yIndices.last, yAxBot, yAxTop)
+        log.debug("Lerper: {}, {} -> {}, {}", yIndices.first, yIndices.last, yAxBot, yAxTop)
 
         val pts = ds.mapIndexed { i, (l, y) ->
-            val out = Triple(i * hSpacing + 12, tempToYCoord(y.roundToInt()), l)
+            val out = Triple(i * hSpacing + 12, ylerp(y.roundToInt()), l)
             log.debug("{}, {} -> {}", i, y, out.toString())
             out
         }
 
         // Axes
         g.stroke = BasicStroke(1f)
-        g.drawLine(12, 0, 12, yAxBot)
+        g.drawLine(12, yAxTop, 12, yAxBot)
         g.drawLine(buf.width, yAxBot, 12, yAxBot)
 
         // X Labels
@@ -41,7 +43,11 @@ class LineGraph(private val xs: List<String>, private val ys: List<Double>, val 
 
         // Y Labels
         for (t in yIndices) {
-            g.drawString(t.toString(), 0, tempToYCoord(t))
+            val y = ylerp(t)
+            val yl = y + metrics.height / 2
+            g.drawString(t.toString(), 0, yl)
+            g.drawRect(12, y, 2, 1)
+            log.debug("{} at y = {}", t, y)
         }
 
         // Data
