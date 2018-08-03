@@ -6,10 +6,11 @@ import io.github.plenglin.goggle.commands.RunnableCommand
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.EncoderInputEvent
-import io.github.plenglin.goggle.util.space.OrthographicCamera
+import io.github.plenglin.goggle.util.space.PerspectiveCamera
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation
 import org.apache.commons.math3.geometry.euclidean.threed.RotationOrder
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import org.slf4j.LoggerFactory
 import java.awt.Color
 import java.awt.Graphics2D
@@ -24,7 +25,7 @@ class StarsActivity : Activity() {
     private lateinit var g: Graphics2D
     private lateinit var offset: Rotation
 
-    private val cam = OrthographicCamera()
+    private val cam = PerspectiveCamera()
 
     private var endIndex = 0
     private var appMag = 30
@@ -44,8 +45,6 @@ class StarsActivity : Activity() {
     override fun resume() {
         updateApparentMagnitude()
         offset = getOffset()
-        cam.scale = 128.0
-        cam.translation = Vector3D(64.0, 32.0, 0.0)
 
         stopDisplayMagnitudeAfter = System.currentTimeMillis() + 1000L
         offsetUpdater = PeriodicCommand(
@@ -75,7 +74,13 @@ class StarsActivity : Activity() {
     override fun update(dt: Int) {
         val time = System.currentTimeMillis()
         val ori = ctx.orientation.orientation
+
+        cam.translation = Vector3D.ZERO
+        cam.postTranslation = Vector2D(64.0, 32.0)
+        cam.postScale = 128.0
         cam.rotation = ori.applyTo(offset)
+        cam.projectionRadiusX = 0.5
+        cam.projectionRadiusY = 0.2
         cam.update()
 
         g.clearRect(0, 0, ctx.hardware.display.displayWidth, ctx.hardware.display.displayHeight)
@@ -83,25 +88,22 @@ class StarsActivity : Activity() {
 
         for (i in 0 until endIndex) {
             val star = AstronomyResources.stars[i]
-            val pt = cam.project(star.cSpherePosition)
-            if (pt[2] > 0) {
-                log.trace("Drawing to {}: {}", pt, star)
-                g.fillRect(pt[0].roundToInt(), pt[1].roundToInt(), 1, 1)
+            cam.draw(star.cSpherePosition) {
+                val (x, y) = it[0]
+                log.debug("Drawing to {}, {}: {}", x, y, star)
+                g.fillRect(x.roundToInt(), y.roundToInt(), 1, 1)
             }
         }
 
-        cam.project(doubleArrayOf(0.0, 0.0, 1.0)).let {
-            if (it[2] > 0) {
-                g.drawString("CN", it[0].roundToInt(), it[1].roundToInt())
-            }
+        cam.draw(doubleArrayOf(0.0, 0.0, 1.0)) {
+            val (x, y) = it[0]
+            g.drawString("CN", x.roundToInt(), y.roundToInt())
         }
 
-        cam.project(doubleArrayOf(0.0, 0.0, -1.0)).let {
-            if (it[2] > 0) {
-                g.drawString("CS", it[0].roundToInt(), it[1].roundToInt())
-            }
+        cam.draw(doubleArrayOf(0.0, 0.0, -1.0)) {
+            val (x, y) = it[0]
+            g.drawString("CS", x.roundToInt(), y.roundToInt())
         }
-        //println(cam.project(alderamin.cSpherePosition).contentToString())
 
         cam.rotation = ori
         cam.update()
@@ -110,12 +112,11 @@ class StarsActivity : Activity() {
         val metrics = g.fontMetrics
 
         AstronomyResources.SYMBOLS.forEach { (s, p) ->
-            cam.project(p).let {
-                if (it[2] > 0) {
-                    val x = metrics.stringWidth(s)
-                    val y = metrics.height
-                    g.drawString(s, it[0].roundToInt() - x / 2, it[1].roundToInt() + y / 2)
-                }
+            cam.draw(p) {
+                val (x, y) = it[0]
+                val dx = metrics.stringWidth(s) / 2
+                val dy = metrics.height / 2
+                g.drawString(s, x.roundToInt() - dx, y.roundToInt() + dy)
             }
         }
 

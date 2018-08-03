@@ -20,10 +20,7 @@ class HomeSensorsActivity : Activity() {
 
     private lateinit var g: Graphics2D
     private val log = LoggerFactory.getLogger(javaClass)
-    private val cam = PerspectiveCamera().apply {
-        projectionRadiusX = 0.5
-        projectionRadiusY = 0.2
-    }
+    private val cam = PerspectiveCamera()
 
     private fun onInput(e: InputEvent) {
         when (e) {
@@ -56,6 +53,9 @@ class HomeSensorsActivity : Activity() {
         cam.translation = Vector3D.ZERO
         cam.postTranslation = Vector2D(64.0, 32.0)
         cam.postScale = 128.0
+        cam.projectionRadiusX = 0.5
+        cam.projectionRadiusY = 0.2
+
         cam.update()
 
         g.clearRect(0, 0, 128, 128)
