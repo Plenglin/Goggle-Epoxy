@@ -4,9 +4,11 @@ import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.input.ButtonInputEvent
 import io.github.plenglin.goggle.util.input.InputEvent
 import io.github.plenglin.goggle.util.space.Line
-import io.github.plenglin.goggle.util.space.OrthographicCamera
+import io.github.plenglin.goggle.util.space.PerspectiveCamera
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D
 import org.apache.commons.math3.linear.MatrixUtils
+import org.slf4j.LoggerFactory
 import java.awt.BasicStroke
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -17,7 +19,11 @@ import kotlin.math.roundToInt
 class HomeSensorsActivity : Activity() {
 
     private lateinit var g: Graphics2D
-    private val cam = OrthographicCamera()
+    private val log = LoggerFactory.getLogger(javaClass)
+    private val cam = PerspectiveCamera().apply {
+        projectionRadiusX = 0.5
+        projectionRadiusY = 0.2
+    }
 
     private fun onInput(e: InputEvent) {
         when (e) {
@@ -47,18 +53,23 @@ class HomeSensorsActivity : Activity() {
         val time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
         cam.rotation = ctx.orientation.orientation
-        cam.translation = Vector3D(64.0, 32.0, 0.0)
-        cam.scale = 128.0
+        cam.translation = Vector3D.ZERO
+        cam.postTranslation = Vector2D(64.0, 32.0)
+        cam.postScale = 128.0
         cam.update()
 
-        val trLongitude = LONGITUDE_LINES.map { cam.project(it.first) to cam.project(it.second) }
-        val trLatitude = LATITUDE_LINES.map { cam.project(it.first) to cam.project(it.second) }
-
         g.clearRect(0, 0, 128, 128)
+        val oldTform = g.transform
+        /*g.translate(64, 32)
+        g.scale(64.0, 64.0)*/
+        log.debug("{}", g.transform)
 
-        for ((a, b) in trLongitude + trLatitude) {
-            drawAtPoint(a) {
-                g.drawLine(a[0].roundToInt(), a[1].roundToInt(), b[0].roundToInt(), b[1].roundToInt())
+        for ((a, b) in LONGITUDE_LINES + LATITUDE_LINES) {
+            cam.draw(a, b) { pts ->
+                log.debug("{}", pts)
+                g.drawLine(
+                        pts[0].first.roundToInt(), pts[0].second.roundToInt(),
+                        pts[1].first.roundToInt(), pts[1].second.roundToInt())
             }
         }
 
@@ -66,13 +77,14 @@ class HomeSensorsActivity : Activity() {
         val metrics = g.fontMetrics
 
         SYMBOLS.forEach { (s, p) ->
-            drawAtPoint(cam.project(p)) {
+            cam.draw(p) {
                 val x = metrics.stringWidth(s)
                 val y = metrics.height
-                g.drawString(s, it[0].roundToInt() - x / 2, it[1].roundToInt() + y / 2)
+                g.drawString(s, it[0].first.roundToInt() - x / 2, it[0].second.roundToInt() + y / 2)
             }
         }
 
+        g.transform = oldTform
         g.drawString(time, ctx.display.displayWidth * 6/8, metrics.height)
         g.drawString("${"%.1f".format(temp)}C", 0, 48)
         g.drawString("${"%.1f".format(pres)}kPa", 0, 56)
@@ -81,13 +93,6 @@ class HomeSensorsActivity : Activity() {
 
     override fun stop() {
         g.dispose()
-        ctx.input.listener = {}
-    }
-
-    private inline fun drawAtPoint(pt: DoubleArray, action: (DoubleArray) -> Unit) {
-        if (pt[2] > 0) {
-            action(pt)
-        }
     }
 
     companion object {
