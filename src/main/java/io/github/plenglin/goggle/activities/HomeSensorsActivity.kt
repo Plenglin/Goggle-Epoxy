@@ -10,6 +10,8 @@ import org.apache.commons.math3.linear.MatrixUtils
 import java.awt.BasicStroke
 import java.awt.Graphics2D
 import java.awt.RenderingHints
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 class HomeSensorsActivity : Activity() {
@@ -42,6 +44,7 @@ class HomeSensorsActivity : Activity() {
         val temp = ctx.hardware.therm.temperature
         val pres = ctx.hardware.bar.pressure
         val alt = ctx.hardware.alt.altitude
+        val time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 
         cam.rotation = ctx.orientation.orientation
         cam.translation = Vector3D(64.0, 32.0, 0.0)
@@ -70,6 +73,7 @@ class HomeSensorsActivity : Activity() {
             }
         }
 
+        g.drawString(time, ctx.display.displayWidth * 6/8, metrics.height)
         g.drawString("${"%.1f".format(temp)}C", 0, 48)
         g.drawString("${"%.1f".format(pres)}kPa", 0, 56)
         g.drawString("${"%.1f".format(alt)}m", 0, 64)
