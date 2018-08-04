@@ -3,7 +3,6 @@ package io.github.plenglin.goggleapp.weather
 import com.google.gson.annotations.SerializedName
 import io.github.plenglin.goggle.SECONDS_PER_DAY
 import java.time.LocalDate
-import java.util.*
 
 data class OWMCurrentData(val dt: Long,
                           val main: OWMMain,
@@ -22,12 +21,13 @@ data class OWMForecastData(val city: OWMCityInfo,
         list.groupBy { LocalDate.ofEpochDay(it.dt / SECONDS_PER_DAY ) }  // Group by days
                 .map { (day, pts) ->
                     println("$day: $pts")
+                    val temps = pts.map { it.main.temp }
                     DayWeatherData(
                             day = day,
-                            highTemp = pts.maxBy { it.main.temp }!!.main.temp,
-                            lowTemp = pts.minBy { it.main.temp }!!.main.temp,
+                            highTemp = temps.max()!!,
+                            lowTemp = temps.min()!!,
                             pressure = pts.sumByDouble { it.main.pressure },
-                            conditions = pts.map { it.weather.map { it.main } }.flatten().distinct()
+                            conditions = pts.map { it.weather.map(OWMWeather::main) }.flatten().distinct()
                     )
                 }.sortedBy { it.day }
 

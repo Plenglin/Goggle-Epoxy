@@ -145,8 +145,8 @@ class StarsActivity : Activity() {
         val timeOfDay = now.hour * 3600 + now.minute * 60 + now.second
         val angleToMidnight = 2 * Math.PI * timeOfDay / AstronomyResources.SECONDS_PER_DAY
 
-        val ra = ctx.hardware.gps!!.longitudeInRadians + adjAngleToEquinox + angleToMidnight - Math.PI
-        val dec = ctx.hardware.gps!!.latitudeInRadians
+        val ra = ctx.hardware.gps.longitudeInRadians + adjAngleToEquinox + angleToMidnight - Math.PI
+        val dec = ctx.hardware.gps.latitudeInRadians
 
         log.debug("a2e: {}; aa2e: {}; a2m: {}; RA: {}; Dec: {}", angleToEquinox, adjAngleToEquinox, angleToMidnight, ra, dec)
 

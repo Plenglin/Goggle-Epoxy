@@ -39,7 +39,7 @@ class PerspectiveCamera {
             val x = ortho.mapIndexed { i, v -> v[0] / z[i] }
             val y = ortho.mapIndexed { i, v -> v[1] / z[i] }
             if (Math.abs(x[0]) < projectionRadiusX && Math.abs(y[0]) < projectionRadiusY) {  // Cull out of bounds
-                println("$x, $y, $z")
+                //println("$x, $y, $z")
                 op(x.map { it * postScale + postTranslation.x }.zip(y.map { it * postScale + postTranslation.y }))
             }
         }
