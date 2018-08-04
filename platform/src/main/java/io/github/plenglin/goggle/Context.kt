@@ -7,7 +7,10 @@ import io.github.plenglin.goggle.commands.EncoderEventQueueFeeder
 import io.github.plenglin.goggle.util.OrientationIntegrator
 import io.github.plenglin.goggle.util.activity.Activity
 import io.github.plenglin.goggle.util.activity.ActivityManager
+import io.github.plenglin.goggle.util.app.AppDef
 import io.github.plenglin.goggle.util.app.GoggleAppRegistry
+import io.github.plenglin.goggle.util.app.QualifiedAppDef
+import io.github.plenglin.goggle.util.app.StandardAppDef
 import io.github.plenglin.goggle.util.input.InputManager
 import io.github.plenglin.goggle.util.scheduler.Scheduler
 import org.slf4j.LoggerFactory
@@ -16,6 +19,7 @@ import java.sql.DriverManager
 class Context(val resources: Resources,
               val hardware: Hardware,
               val initialActivity: Activity = BlankActivity(),
+              val apps: List<AppDef> = emptyList(),
               oriCompensation: Double = 0.02,
               val sleepDelay: Long = 0) : AutoCloseable {
 
@@ -45,9 +49,12 @@ class Context(val resources: Resources,
     fun run() {
         log.info("Starting Context {}", this)
 
-        appRegistry.registerApp("AstronomyApp")
-        appRegistry.registerApp("TetrisApp")
-        appRegistry.registerApp("WeatherForecastApp")
+        apps.forEach {
+            when (it) {
+                is StandardAppDef -> appRegistry.registerApp(it.app)
+                is QualifiedAppDef -> appRegistry.registerApp(it.name)
+            }
+        }
 
         hardware.commands.forEach(scheduler::addCommand)
         hardware.buttons.forEach {
