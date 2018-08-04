@@ -1,4 +1,3 @@
-include 'platform', 'emulator', 'app-astronomy','app-tetris','app-weather'
+include 'platform', 'run-emulator', 'run-embedded', 'app-astronomy', 'app-tetris', 'app-weather'
 
 rootProject.name = 'GoggleEpoxy'
-

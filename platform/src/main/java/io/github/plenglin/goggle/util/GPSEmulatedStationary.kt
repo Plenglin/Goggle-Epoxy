@@ -1,4 +1,4 @@
-package io.github.plenglin.goggle.emulated
+package io.github.plenglin.goggle.util
 
 import io.github.plenglin.goggle.devices.GPS
 

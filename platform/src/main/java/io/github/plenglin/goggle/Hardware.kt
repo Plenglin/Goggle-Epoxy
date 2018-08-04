@@ -12,7 +12,7 @@ import io.github.plenglin.goggle.devices.motion.Magnetometer
 import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
-import io.github.plenglin.goggle.emulated.GPSEmulatedStationary
+import io.github.plenglin.goggle.util.GPSEmulatedStationary
 import io.github.plenglin.goggle.util.scheduler.Command
 
 class Hardware(
