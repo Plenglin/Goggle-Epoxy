@@ -14,6 +14,9 @@ apply plugin: 'kotlin'
 
 dependencies {
     compile project(":platform")
+    compile project(":app-astronomy")
+    compile project(":app-tetris")
+    compile project(":app-weather")
 }
 
 sourceSets {

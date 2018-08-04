@@ -10,6 +10,7 @@ import io.github.plenglin.goggle.devices.weather.Altimeter
 import io.github.plenglin.goggle.devices.weather.Barometer
 import io.github.plenglin.goggle.devices.weather.Thermometer
 import io.github.plenglin.goggle.util.GPSEmulatedStationary
+import io.github.plenglin.goggle.util.app.QualifiedAppDef
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D
 import org.apache.log4j.BasicConfigurator
 import org.apache.log4j.Logger
@@ -124,6 +125,11 @@ fun main(args: Array<String>) {
     Context(Resources(), hw,
             //initialActivity = TetrisMenuActivity(),
             oriCompensation = 1.0,
-            sleepDelay = 15L
+            sleepDelay = 15L,
+            apps = listOf(
+                    QualifiedAppDef("io.github.plenglin.goggleapp.astronomy.AstronomyApp"),
+                    QualifiedAppDef("io.github.plenglin.goggleapp.tetris.TetrisApp"),
+                    QualifiedAppDef("io.github.plenglin.goggleapp.weather.WeatherForecastApp")
+            )
     ).run()
 }
