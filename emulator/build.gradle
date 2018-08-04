@@ -1,4 +1,35 @@
-/*
+buildscript {
+    ext.main_class_emulated = 'io.github.plenglin.goggle.emulated.MainEmulatedKt'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+dependencies {
+    compile project(":platform")
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("./src/main/resources")
+        }
+    }
+}
+
+task run(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = main_class_emulated
+    workingDir = "."
+}
+
 jar {
     archiveName = 'Goggle-Epoxy.jar'
 
@@ -19,4 +50,3 @@ jar {
 
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
-*/
