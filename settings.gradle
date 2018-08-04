@@ -1,2 +1,3 @@
-rootProject.name = 'GoggleEpoxy'
+include 'platform', 'run-emulator', 'run-embedded', 'app-astronomy', 'app-tetris', 'app-weather'
 
+rootProject.name = 'GoggleEpoxy'
