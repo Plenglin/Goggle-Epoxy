@@ -9,6 +9,7 @@ import io.github.plenglin.goggle.Context
 import io.github.plenglin.goggle.Hardware
 import io.github.plenglin.goggle.Resources
 import io.github.plenglin.goggle.hardware.*
+import io.github.plenglin.goggle.util.app.QualifiedAppDef
 import org.apache.log4j.BasicConfigurator
 
 fun main(args: Array<String>) {
@@ -45,5 +46,11 @@ fun main(args: Array<String>) {
             commands = listOf(mpl, acc, mag, gyro)
     )
 
-    Context(Resources(), hw).run()
+    Context(Resources(), hw,
+            apps = listOf(
+                    QualifiedAppDef("io.github.plenglin.goggleapp.astronomy.AstronomyApp"),
+                    QualifiedAppDef("io.github.plenglin.goggleapp.tetris.TetrisApp"),
+                    QualifiedAppDef("io.github.plenglin.goggleapp.weather.WeatherForecastApp")
+            )
+    ).run()
 }
