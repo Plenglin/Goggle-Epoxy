@@ -1,0 +1,1 @@
+This package is the entry point for emulating the headset on a desktop computer. 

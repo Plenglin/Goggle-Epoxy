@@ -1,0 +1,1 @@
+This app projects stars such that when you look in a direction, you will see them where they should be.

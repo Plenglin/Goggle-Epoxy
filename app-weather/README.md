@@ -1,0 +1,1 @@
+This app tells you what the weather is/will be like. It uses [OpenWeatherMap](https://openweathermap.org/api)'s API.
