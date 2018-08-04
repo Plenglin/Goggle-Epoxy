@@ -35,8 +35,8 @@ class WeatherSummaryActivity(val wctx: WeatherContext) : Activity() {
                     redraw()
                 }
                 ButtonInputEvent("x", true) -> {
-                    WeatherResources.getForecastData(wctx.lat, wctx.lon) {
-                        ctx.activity.pushActivity(GraphActivity(it!!))
+                    WeatherResources.getForecastData(wctx.lat, wctx.lon) { fc ->
+                        ctx.activity.pushActivity(GraphActivity(fc!!))
                     }
                 }
                 ButtonInputEvent("z", true) -> {

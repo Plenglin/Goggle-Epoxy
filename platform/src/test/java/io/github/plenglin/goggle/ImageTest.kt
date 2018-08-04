@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     var x = 0
     var y = 0
     for (i in 0 until buf.size) {
-        x++;
+        x++
         val r = buf[i]
         if (r and 0x00ff0000 != 0) {
             print("1")

@@ -45,9 +45,9 @@ class Context(val resources: Resources,
     fun run() {
         log.info("Starting Context {}", this)
 
-        appRegistry.registerApp("io.github.plenglin.goggleapp.astronomy.AstronomyApp")
-        appRegistry.registerApp("io.github.plenglin.goggleapp.tetris.TetrisApp")
-        appRegistry.registerApp("io.github.plenglin.goggleapp.weather.WeatherForecastApp")
+        appRegistry.registerApp("AstronomyApp")
+        appRegistry.registerApp("TetrisApp")
+        appRegistry.registerApp("WeatherForecastApp")
 
         hardware.commands.forEach(scheduler::addCommand)
         hardware.buttons.forEach {

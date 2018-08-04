@@ -41,18 +41,18 @@ class WeatherMPL3115A2(val dev: I2CDevice) : Command(), Altimeter, Barometer, Th
     }
 
     private fun updateAltThm() {
-        dev.write(0x26, 0xB9.toByte());
+        dev.write(0x26, 0xB9.toByte())
         val buf = ByteArray(6)
         dev.read(0x00, buf, 0, 6)
         val rawAltitude = (buf[1].toInt() shl 16) or (buf[2].toInt() shl 8) or (buf[3].toInt())
         val rawTemp = (buf[4].toInt() shl 8) or buf[5].toInt()
-        altitude = rawAltitude / 256.0;
-        temperature = rawTemp / 256.0;
+        altitude = rawAltitude / 256.0
+        temperature = rawTemp / 256.0
         isAltThmUpdated = true
     }
 
     private fun updateBar() {
-        dev.write(0x26, 0x39.toByte());
+        dev.write(0x26, 0x39.toByte())
         val buf = ByteArray(4)
         dev.read(0x00, buf, 0, 4)
         val rawPressure = (buf[1].toInt() shl 16) or (buf[2].toInt() shl 8) or (buf[3].toInt())

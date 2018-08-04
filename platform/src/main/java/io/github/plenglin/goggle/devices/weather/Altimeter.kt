@@ -4,5 +4,5 @@ interface Altimeter {
     /**
      * The altitude, in meters
      */
-    val altitude: Double;
+    val altitude: Double
 }
