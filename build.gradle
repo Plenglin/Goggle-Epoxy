@@ -2,9 +2,6 @@ buildscript {
     ext.kotlin_version = '1.2.60'
     ext.fuel_version = '1.12.0'
 
-    ext.main_class_embedded = 'io.github.plenglin.goggle.MainEmbeddedKt'
-    ext.main_class_emulated = 'io.github.plenglin.goggle.emulated.MainEmulatedKt'
-
     repositories {
         mavenCentral()
     }
