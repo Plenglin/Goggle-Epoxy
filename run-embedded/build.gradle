@@ -1,5 +1,5 @@
 buildscript {
-    ext.main_class_emulated = 'io.github.plenglin.goggle.emulated.MainEmulatedKt'
+    ext.main_class_embedded = 'io.github.plenglin.goggle.embedded.MainEmbeddedKt'
 
     repositories {
         mavenCentral()
@@ -14,10 +14,16 @@ apply plugin: 'kotlin'
 
 dependencies {
     compile project(":platform")
+    compile project(":app-astronomy")
+    compile project(":app-tetris")
+    compile project(":app-weather")
 }
 
 sourceSets {
     main {
+        java {
+            srcDir("./src/main/java")
+        }
         resources {
             srcDir("./src/main/resources")
         }
@@ -26,7 +32,7 @@ sourceSets {
 
 task run(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = main_class_emulated
+    main = main_class_embedded
     workingDir = "."
 }
 
