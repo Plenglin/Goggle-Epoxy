@@ -29,11 +29,11 @@ fun main(args: Array<String>) {
     val btnY = ButtonGPIO("y", gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP))
     val btnZ = ButtonGPIO("z", gpio.provisionDigitalInputPin(RaspiPin.GPIO_06, PinPullResistance.PULL_UP))
     val btnS = ButtonGPIO("s", gpio.provisionDigitalInputPin(RaspiPin.GPIO_22, PinPullResistance.PULL_UP))
-    val btnH = ButtonGPIO("h", gpio.provisionDigitalInputPin(RaspiPin.GPIO_25, PinPullResistance.PULL_UP))
+    val btnH = ButtonGPIO("h", gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, PinPullResistance.PULL_UP))
 
     val encSel = EncoderGPIO("sel",
             gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_UP),
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_05, PinPullResistance.PULL_UP)
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_04, PinPullResistance.PULL_UP)
     )
 
     val hw = Hardware(
