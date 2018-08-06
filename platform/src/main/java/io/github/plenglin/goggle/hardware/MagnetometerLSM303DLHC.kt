@@ -14,16 +14,16 @@ class MagnetometerLSM303DLHC(val dev: I2CDevice, val scale: MagnetometerLSM303DL
     private val multiplier: Double = scale.scl / 2048
 
     override fun initialize() {
-        // TODO: CHECK IF CORRECT
-        dev.write(0x20, 0x27)
-        dev.write(0x23, scale.msg.toByte() and 0x30)
+        dev.write(0x00, 0x10)
+        dev.write(0x01, scale.msg.toByte() and 0xe0.toByte())
+        dev.write(0x02, 0x00)
     }
 
     override fun update(dt: Int) {
         magneticField = Vector3D(
                 multiplier * ((dev.read(0x03) shl 8) or dev.read(0x04)).fixSign(32768).toDouble(),
-                multiplier * ((dev.read(0x05) shl 8) or dev.read(0x06)).fixSign(32768).toDouble(),
-                multiplier * ((dev.read(0x07) shl 8) or dev.read(0x08)).fixSign(32768).toDouble()
+                multiplier * ((dev.read(0x07) shl 8) or dev.read(0x08)).fixSign(32768).toDouble(),
+                multiplier * ((dev.read(0x05) shl 8) or dev.read(0x06)).fixSign(32768).toDouble()
         )
     }
 
@@ -31,7 +31,7 @@ class MagnetometerLSM303DLHC(val dev: I2CDevice, val scale: MagnetometerLSM303DL
 
 enum class MagnetometerLSM303DLHCScale(val msg: Short, val scl: Double) {
     S_13(0x20, 1.3),
-    S_25(0x60, 1.3),
-    S_40(0x80, 1.3),
-    S_81(0xD0, 1.3),
+    S_25(0x60, 2.5),
+    S_40(0x80, 4.0),
+    S_81(0xD0, 8.1),
 }

@@ -17,8 +17,8 @@ fun main(args: Array<String>) {
     val gpio = GpioFactory.getInstance()!!
     val i2c = I2CFactory.getInstance(I2CBus.BUS_1)!!
 
-    val acc = AccelerometerLSM303DLHC(i2c.getDevice(0b0011001), AccelerometerLSM303DLHCScale.S_8)
-    val mag = MagnetometerLSM303DLHC(i2c.getDevice(0b0011110), MagnetometerLSM303DLHCScale.S_81)
+    val acc = AccelerometerLSM303DLHC(i2c.getDevice(0b0011001), AccelerometerLSM303DLHCScale.S_4)
+    val mag = MagnetometerLSM303DLHC(i2c.getDevice(0b0011110), MagnetometerLSM303DLHCScale.S_13)
     val gyro = GyroL3GD20(i2c.getDevice(0x69), GyroL3GD20Scale.S_2000)
 
     val mpl = WeatherMPL3115A2(i2c.getDevice(0x60))
