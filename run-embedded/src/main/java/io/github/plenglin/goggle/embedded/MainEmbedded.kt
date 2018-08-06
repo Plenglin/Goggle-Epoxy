@@ -19,11 +19,11 @@ fun main(args: Array<String>) {
 
     val acc = AccelerometerLSM303DLHC(i2c.getDevice(0b0011001), AccelerometerLSM303DLHCScale.S_8)
     val mag = MagnetometerLSM303DLHC(i2c.getDevice(0b0011110), MagnetometerLSM303DLHCScale.S_81)
-    val gyro = GyroL3GD20(i2c.getDevice(0x6B), GyroL3GD20Scale.S_2000)
+    val gyro = GyroL3GD20(i2c.getDevice(0x69), GyroL3GD20Scale.S_2000)
 
     val mpl = WeatherMPL3115A2(i2c.getDevice(0x60))
 
-    val ssd = DisplaySSD1306(i2c.getDevice(0x7a))  // potentially 0x3c
+    val ssd = DisplaySSD1306(i2c.getDevice(0x3c))
 
     val btnX = ButtonGPIO("x", gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP))
     val btnY = ButtonGPIO("y", gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP))
