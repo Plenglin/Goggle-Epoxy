@@ -37,3 +37,4 @@ fun lerper(a1: Double, a2: Double, b1: Double, b2: Double): (Double) -> Double {
     return {slope * (it - a1) + b1}
 }
 
+fun Int.fixSign(size: Int): Int = if (this > size) this - 2 * size else this
