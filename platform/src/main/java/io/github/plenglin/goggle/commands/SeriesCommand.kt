@@ -22,7 +22,4 @@ class SeriesCommand(val scheduler: Scheduler, vararg val commands: Command) : Co
         }
     }
 
-    override fun shouldTerminate(): Boolean {
-        return super.shouldTerminate()
-    }
 }

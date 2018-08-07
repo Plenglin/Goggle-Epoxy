@@ -1,5 +1,6 @@
 package io.github.plenglin.goggle.util
 
+import com.pi4j.io.i2c.I2CDevice
 import java.awt.Graphics2D
 import java.awt.Rectangle
 
@@ -38,3 +39,26 @@ fun lerper(a1: Double, a2: Double, b1: Double, b2: Double): (Double) -> Double {
 }
 
 fun Int.fixSign(size: Int): Int = if (this > size) this - 2 * size else this
+
+fun I2CDevice.write(addr: Int, byte: Int) {
+    write(addr, byte.toByte())
+}
+
+private val BYTE_REVERSE_LOOKUP = ByteArray(256) {
+    var x = it
+    var b = 0
+    for (i in 0 until 8) {
+        b = (b shl 1) or (x and 1)
+        x = x ushr 1
+    }
+    b.toByte()
+}
+
+fun Byte.reversed(): Byte = BYTE_REVERSE_LOOKUP[if (this < 0) this.toInt() + 256 else this.toInt()]
+
+fun main(args: Array<String>) {
+    println("${Integer.toBinaryString(0x32)}, ${Integer.toBinaryString(0x32.toByte().reversed().toInt())}")
+    println("${Integer.toBinaryString(0xff)}, ${Integer.toBinaryString(0xff.toByte().reversed().toInt())}")
+    println("${Integer.toBinaryString(0xe0)}, ${Integer.toBinaryString(0xe0.toByte().reversed().toInt())}")
+    println("${Integer.toBinaryString(0x01)}, ${Integer.toBinaryString(0x01.toByte().reversed().toInt())}")
+}

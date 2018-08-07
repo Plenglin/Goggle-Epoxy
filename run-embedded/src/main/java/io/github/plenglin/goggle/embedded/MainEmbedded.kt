@@ -13,7 +13,7 @@ import io.github.plenglin.goggle.util.app.QualifiedAppDef
 import org.apache.log4j.BasicConfigurator
 
 fun main(args: Array<String>) {
-    BasicConfigurator.configure()
+    /*BasicConfigurator.configure()
     val gpio = GpioFactory.getInstance()!!
     val i2c = I2CFactory.getInstance(I2CBus.BUS_1)!!
 
@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
     val mpl = WeatherMPL3115A2(i2c.getDevice(0x60))
 
-    val ssd = DisplaySSD1306(i2c.getDevice(0x3c))
+    val ssd = DisplaySSD1306I2C(i2c.getDevice(0x3c))
 
     val btnX = ButtonGPIO("x", gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_UP))
     val btnY = ButtonGPIO("y", gpio.provisionDigitalInputPin(RaspiPin.GPIO_03, PinPullResistance.PULL_UP))
@@ -52,5 +52,5 @@ fun main(args: Array<String>) {
                     QualifiedAppDef("io.github.plenglin.goggleapp.tetris.TetrisApp"),
                     QualifiedAppDef("io.github.plenglin.goggleapp.weather.WeatherForecastApp")
             )
-    ).run()
+    ).run()*/
 }
