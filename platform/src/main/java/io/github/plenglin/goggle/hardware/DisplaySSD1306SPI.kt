@@ -1,17 +1,15 @@
 package io.github.plenglin.goggle.hardware
 
 import com.pi4j.io.gpio.GpioPinDigitalOutput
-import com.pi4j.io.i2c.I2CDevice
 import com.pi4j.io.spi.SpiDevice
-import com.pi4j.wiringpi.Spi
 import io.github.plenglin.goggle.devices.display.Display
-import io.github.plenglin.goggle.util.reversed
 import io.github.plenglin.goggle.util.scheduler.Command
-import io.github.plenglin.goggle.util.write
 import org.slf4j.LoggerFactory
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.DataBufferByte
+import kotlin.experimental.and
+import kotlin.experimental.or
 
 /**
  * Copied, pasted, and ported from https://github.com/adafruit/Adafruit_SSD1306/
@@ -70,7 +68,7 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
     override val displayWidth: Int = 128
     override val displayHeight: Int = 64
 
-    private val image = BufferedImage(128, 64, BufferedImage.TYPE_BYTE_BINARY)
+    private val image = BufferedImage(displayWidth, displayHeight, BufferedImage.TYPE_BYTE_BINARY)
 
     override fun createGraphics(): Graphics2D = image.createGraphics()
 
@@ -79,66 +77,19 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
     }
 
     private fun ssd1306_command(cmd: Byte) {
-        log.debug("Sending CMD: 0x{}", Integer.toHexString(cmd.toInt()))
+        log.trace("Sending CMD: 0x{}", Integer.toHexString(cmd.toInt()))
         dev.write(cmd)
     }
 
     override fun initialize() {
-        val vccstate = SSD1306_SWITCHCAPVCC
-        val SSD1306_LCDHEIGHT = displayHeight
-
         // Reset the display
-        /*rst.high()
+        rst.high()
         Thread.sleep(1)
         rst.low()
         Thread.sleep(10)
-        rst.high()*/
+        rst.high()
 
         dc.low()
-        // Command Sequence
-        /*ssd1306_command(SSD1306_DISPLAYOFF)                    // 0xAE
-        ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV)            // 0xD5
-        ssd1306_command(0x80)                                  // the suggested ratio 0x80
-
-        ssd1306_command(SSD1306_SETMULTIPLEX)                  // 0xA8
-        ssd1306_command(SSD1306_LCDHEIGHT - 1)
-
-        ssd1306_command(SSD1306_SETDISPLAYOFFSET)              // 0xD3
-        ssd1306_command(0x0)                                   // no offset
-        ssd1306_command(SSD1306_SETSTARTLINE or 0x0)            // line #0
-        ssd1306_command(SSD1306_CHARGEPUMP)                    // 0x8D
-        if (vccstate == SSD1306_EXTERNALVCC)
-        { ssd1306_command(0x10); }
-        else
-        { ssd1306_command(0x14); }
-        ssd1306_command(SSD1306_MEMORYMODE)                    // 0x20
-        ssd1306_command(0x00)                                  // 0x0 act like ks0108
-        //ssd1306_command(0x01)
-        ssd1306_command(SSD1306_SEGREMAP or 0x1)
-        ssd1306_command(SSD1306_COMSCANDEC)
-
-        ssd1306_command(SSD1306_SETCOMPINS)                    // 0xDA
-        ssd1306_command(0x12)
-        ssd1306_command(SSD1306_SETCONTRAST)                   // 0x81
-        if (vccstate == SSD1306_EXTERNALVCC)
-        { ssd1306_command(0x9F); }
-        else
-        { ssd1306_command(0xCF); }
-
-
-        ssd1306_command(SSD1306_SETPRECHARGE)                  // 0xd9
-        if (vccstate == SSD1306_EXTERNALVCC)
-        { ssd1306_command(0x22); }
-        else
-        { ssd1306_command(0xF1); }
-        ssd1306_command(SSD1306_SETVCOMDETECT)                 // 0xDB
-        ssd1306_command(0x40)
-        ssd1306_command(SSD1306_DISPLAYALLON_RESUME)           // 0xA4
-        ssd1306_command(SSD1306_NORMALDISPLAY)                 // 0xA6
-
-        ssd1306_command(SSD1306_DEACTIVATE_SCROLL)
-
-        ssd1306_command(SSD1306_DISPLAYON)//--turn on oled panel*/
 
         ssd1306_command(SSD1306_DISPLAYOFF)                    // 0xAE
         ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV)            // 0xD5
@@ -151,7 +102,10 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
         ssd1306_command(SSD1306_CHARGEPUMP)                    // 0x8D
         ssd1306_command(0x14.toByte())
         ssd1306_command(SSD1306_MEMORYMODE)                    // 0x20
+
         ssd1306_command(0x00.toByte())                           // 0x0 act like ks0108
+        //ssd1306_command(0x01.toByte())
+
         ssd1306_command(SSD1306_SEGREMAP or 0x1)
         ssd1306_command(SSD1306_COMSCANDEC)
         ssd1306_command(SSD1306_SETCOMPINS)                    // 0xDA
@@ -171,7 +125,32 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
 
     override fun update(dt: Int) {
         val start = System.currentTimeMillis()
+
         val data = (image.raster.dataBuffer as DataBufferByte).data
+        val data2 = ByteArray(data.size)
+
+        for (j in 0 until displayHeight step 8) {  // Iterate through 8x8 bit grids
+            for (i in 0 until displayWidth step 8) {
+
+                for (x in 0 until 8) {
+                    var out: Byte = 0
+                    val mask: Byte = (0x80 ushr x).toByte()
+
+                    for (y in 0 until 8) {
+                        //println("jy: ${(j + y) * displayWidth}; i8: ${i / 8}")
+                        val si = (j + y) * displayWidth / 8 + i / 8
+                        val state = data[si] and mask
+                        if (state != 0.toByte()) {
+                            out = out or (0x1 shl y).toByte()
+                        }
+                    }
+
+                    val di = j * displayWidth / 8 + (i + x)
+                    data2[di] = out
+                }
+
+            }
+        }
 
         ssd1306_command(SSD1306_COLUMNADDR)
         ssd1306_command(0)
@@ -182,9 +161,9 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
         ssd1306_command(7) // Page end address
 
         dc.high()
-        dev.write(data, 0, data.size)
+        dev.write(data2, 0, data2.size)
 
-        log.debug("Wrote {} bytes in {} ms: {}", data.size, System.currentTimeMillis() - start, data.contentToString())
+        log.debug("Wrote {} bytes in {} ms", data2.size, System.currentTimeMillis() - start)
     }
 
 }

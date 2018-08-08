@@ -24,8 +24,24 @@ fun main(args: Array<String>) {
 
     val g = ds.createGraphics()
     g.color = Color.WHITE
-    g.drawLine(0, 0, 128, 64)
+    //g.drawLine(0, 0, ds.displayWidth, ds.displayHeight)
+    //g.fillRect(10, 10, 10, 10)
+    //g.fillRect(30, 10, 10, 10)
+    //g.fillRect(10, 30, 10, 10)
+    //g.fillRect(30, 30, 10, 10)
 
-    ds.update(10)
-    gpio.shutdown()
+    try {
+        while (true) {
+            for (y in 0 until ds.displayHeight) {
+                for (x in 0 until ds.displayWidth) {
+                    println("$x,$y")
+                    g.fillRect(x, y, 10, 10)
+                    ds.update(30)
+                    Thread.sleep(250)
+                }
+            }
+        }
+    } finally {
+        gpio.shutdown()
+    }
 }
