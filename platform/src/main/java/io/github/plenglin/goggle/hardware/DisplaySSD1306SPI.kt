@@ -120,6 +120,13 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
         ssd1306_command(SSD1306_NORMALDISPLAY)
 
         ssd1306_command(SSD1306_DISPLAYON)//--turn on oled panel
+        ssd1306_command(SSD1306_COLUMNADDR)
+        ssd1306_command(0)
+        ssd1306_command(127)
+
+        ssd1306_command(SSD1306_PAGEADDR)
+        ssd1306_command(0)
+        ssd1306_command(7) // Page end address
 
     }
 
@@ -151,14 +158,6 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
 
             }
         }
-
-        ssd1306_command(SSD1306_COLUMNADDR)
-        ssd1306_command(0)
-        ssd1306_command(displayWidth - 1)
-
-        ssd1306_command(SSD1306_PAGEADDR)
-        ssd1306_command(0)
-        ssd1306_command(7) // Page end address
 
         dc.high()
         dev.write(data2, 0, data2.size)
