@@ -75,23 +75,28 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
     override fun createGraphics(): Graphics2D = image.createGraphics()
 
     private fun ssd1306_command(cmd: Int) {
-        dc.low()
-        dev.write(cmd.toByte())
+        ssd1306_command(cmd.toByte())
+    }
+
+    private fun ssd1306_command(cmd: Byte) {
+        log.debug("Sending CMD: 0x{}", Integer.toHexString(cmd.toInt()))
+        dev.write(cmd)
     }
 
     override fun initialize() {
-        val vccstate = SSD1306_EXTERNALVCC
+        val vccstate = SSD1306_SWITCHCAPVCC
         val SSD1306_LCDHEIGHT = displayHeight
 
         // Reset the display
-        rst.high()
+        /*rst.high()
         Thread.sleep(1)
         rst.low()
         Thread.sleep(10)
-        rst.high()
+        rst.high()*/
 
+        dc.low()
         // Command Sequence
-        ssd1306_command(SSD1306_DISPLAYOFF)                    // 0xAE
+        /*ssd1306_command(SSD1306_DISPLAYOFF)                    // 0xAE
         ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV)            // 0xD5
         ssd1306_command(0x80)                                  // the suggested ratio 0x80
 
@@ -133,7 +138,35 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
 
         ssd1306_command(SSD1306_DEACTIVATE_SCROLL)
 
+        ssd1306_command(SSD1306_DISPLAYON)//--turn on oled panel*/
+
+        ssd1306_command(SSD1306_DISPLAYOFF)                    // 0xAE
+        ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV)            // 0xD5
+        ssd1306_command(0x80.toByte())                           // the suggested ratio 0x80
+        ssd1306_command(SSD1306_SETMULTIPLEX)                  // 0xA8
+        ssd1306_command(0x3F.toByte())
+        ssd1306_command(SSD1306_SETDISPLAYOFFSET)              // 0xD3
+        ssd1306_command(0x0.toByte())                            // no offset
+        ssd1306_command(SSD1306_SETSTARTLINE or 0x0)   // line #0
+        ssd1306_command(SSD1306_CHARGEPUMP)                    // 0x8D
+        ssd1306_command(0x14.toByte())
+        ssd1306_command(SSD1306_MEMORYMODE)                    // 0x20
+        ssd1306_command(0x00.toByte())                           // 0x0 act like ks0108
+        ssd1306_command(SSD1306_SEGREMAP or 0x1)
+        ssd1306_command(SSD1306_COMSCANDEC)
+        ssd1306_command(SSD1306_SETCOMPINS)                    // 0xDA
+        ssd1306_command(0x12.toByte())
+        ssd1306_command(SSD1306_SETCONTRAST)                   // 0x81
+        ssd1306_command(0xCF.toByte())
+        ssd1306_command(SSD1306_SETPRECHARGE)                  // 0xd9
+        ssd1306_command(0xF1.toByte())
+        ssd1306_command(SSD1306_SETVCOMDETECT)                 // 0xDB
+        ssd1306_command(0x40.toByte())
+        ssd1306_command(SSD1306_DISPLAYALLON_RESUME)           // 0xA4
+        ssd1306_command(SSD1306_NORMALDISPLAY)
+
         ssd1306_command(SSD1306_DISPLAYON)//--turn on oled panel
+
     }
 
     override fun update(dt: Int) {
@@ -149,11 +182,9 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
         ssd1306_command(7) // Page end address
 
         dc.high()
-        for (i in data.indices step 16) {
-            //println("Writing: ${data.slice(i until (i+16))}")
-            dev.write(data, i, 16)
-        }
-        println("Displaying took ${System.currentTimeMillis() - start}ms")
+        dev.write(data, 0, data.size)
+
+        log.debug("Wrote {} bytes in {} ms: {}", data.size, System.currentTimeMillis() - start, data.contentToString())
     }
 
 }

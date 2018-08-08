@@ -1,29 +1,31 @@
 package io.github.plenglin.goggle.embedded
 
 import com.pi4j.io.gpio.GpioFactory
-import com.pi4j.io.gpio.GpioPin
-import com.pi4j.io.gpio.Pin
+import com.pi4j.io.gpio.PinState
 import com.pi4j.io.gpio.RaspiPin
-import com.pi4j.io.i2c.I2CBus
-import com.pi4j.io.i2c.I2CFactory
 import com.pi4j.io.spi.SpiChannel
 import com.pi4j.io.spi.SpiFactory
 import com.pi4j.io.spi.SpiMode
-import io.github.plenglin.goggle.hardware.DisplaySSD1306I2C
 import io.github.plenglin.goggle.hardware.DisplaySSD1306SPI
+import org.apache.log4j.BasicConfigurator
+import java.awt.Color
 
 fun main(args: Array<String>) {
     //val i2c = I2CFactory.getInstance(I2CBus.BUS_1)!!
+    BasicConfigurator.configure()
     val gpio = GpioFactory.getInstance()
-    val spi = SpiFactory.getInstance(SpiChannel.CS1, 8000000, SpiMode.MODE_0)
+    val spi = SpiFactory.getInstance(SpiChannel.CS1, 1000000, SpiMode.MODE_0)
     val ds = DisplaySSD1306SPI(
             dev = spi,
-            dc = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_24),
-            rst = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27))
+            rst = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27, PinState.HIGH),
+            dc = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_24, PinState.LOW)
+    )
     ds.initialize()
 
     val g = ds.createGraphics()
-    g.drawLine(0, 0, 128, 10)
+    g.color = Color.WHITE
+    g.drawLine(0, 0, 128, 64)
 
     ds.update(10)
+    gpio.shutdown()
 }
