@@ -162,7 +162,7 @@ class DisplaySSD1306SPI(val dev: SpiDevice, val dc: GpioPinDigitalOutput, val rs
         dc.high()
         dev.write(data2, 0, data2.size)
 
-        log.debug("Wrote {} bytes in {} ms", data2.size, System.currentTimeMillis() - start)
+        log.trace("Wrote {} bytes in {} ms", data2.size, System.currentTimeMillis() - start)
     }
 
 }

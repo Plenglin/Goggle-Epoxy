@@ -17,15 +17,15 @@ class EncoderGPIO(override val name: String, val a: GpioPinDigitalInput, val b: 
 
         if (pa) {
             if (pb) {  // A high, B high
-                if (!ca) {
+                if (!ca) {  // a hl transition
                     ticks++
-                } else if (!cb) {
+                } else if (!cb) {  // b hl transition
                     ticks--
                 }
             } else {  // A high, B low
-                if (cb) {
+                if (cb) {  // b lh transition
                     ticks++
-                } else if (!ca) {
+                } else if (!ca) {  // a hl transition
                     ticks--
                 }
             }

@@ -34,10 +34,9 @@ fun main(args: Array<String>) {
         while (true) {
             for (y in 0 until ds.displayHeight) {
                 for (x in 0 until ds.displayWidth) {
-                    println("$x,$y")
+                    //println("$x,$y")
                     g.fillRect(x, y, 1, 1)
                     ds.update(30)
-                    Thread.sleep(25)
                 }
             }
         }
