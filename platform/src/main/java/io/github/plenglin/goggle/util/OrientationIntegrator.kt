@@ -31,7 +31,7 @@ class OrientationIntegrator(private val gyro: Gyroscope,
         val northRaw = mag.magneticField
         val down = acc.acceleration
         val east = down.crossProduct(northRaw)
-        val north = down.crossProduct(east)
+        val north = down.crossProduct(east)  // Magnetic dip is dumbo
 
         val delta = gyro.getDeltaRotation(dt)
 
