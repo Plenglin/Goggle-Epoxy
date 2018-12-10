@@ -1,8 +1,6 @@
 # Goggle-Epoxy
 
-Basically, it's a near-eye display similar to Microsoft HoloLens or Google Glass powered by a Raspberry Pi. Unlike Google and Miccrosoft, I am poor and have few means of production, so it's basically crappier.
-
-Because I'm cool (and because I want to learn Gradle) I actually separated the project into 6 subprojects.
+It's a near-eye display similar to Microsoft HoloLens or Google Glass, and it's powered by a Raspberry Pi. The project is separated into 6 subprojects. There will be a new subproject for every app and runtime environment. The CAD models will be put here when I actually make it. 
 
 ## Instructions to Run
 
